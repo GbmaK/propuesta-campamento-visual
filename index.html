@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las Lomas, vitrina día y noche</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=Figtree:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2F5D2A}a:hover{color:#1E3E1A}
+/* Tokens de modo: día por defecto, noche con data-mode */
+.lm{--bg:#FFFFFF;--ink:#23301F;--muted:#3D4A38;--quiet:#56624F;--head:#2F5D2A;--band:#2F5D2A;--soft:#EEF5E6;--soft2:#E2EDD5;--soft3:#D6E6C4;--line:#D6E3C9;--dash:#B9CFA6;--topo:#E3EDD7;--btn:#2F5D2A;--btnInk:#FFFFFF;--btn2:#FFFFFF;--btn2Ink:#2F5D2A;--btn2Line:#FFFFFF;--eyebrow:#6B4A22;--heroInk:#2F5D2A;--mFar:#C8D8AE;--snow:#EEF2E2;--mMid:#8DB07A;--lake:#F1CC98;--mNear:#4F8A3C;--meadow:#5E9A47;--fg:#2F5D2A;--tent:#C8693F;--door:#FAD9A2;--wood:#6B4A22;--day:1;--night:0}
+.lm[data-mode="night"]{--bg:#0F1B15;--ink:#E6EEE0;--muted:#C4D2BC;--quiet:#A3B49A;--head:#D5EBC4;--band:#0A140F;--soft:#13231A;--soft2:#183022;--soft3:#1C3727;--line:#2A3D30;--dash:#3A5642;--topo:#1A2D22;--btn:#F4EFDF;--btnInk:#1E3A1B;--btn2:rgba(244,239,223,0);--btn2Ink:#F4EFDF;--btn2Line:#F4EFDF;--eyebrow:#F2C46A;--heroInk:#F4EFDF;--mFar:#1F3546;--snow:#3B5266;--mMid:#173026;--lake:#1C3A4A;--mNear:#11241A;--meadow:#13281C;--fg:#08110C;--tent:#7A3E26;--door:#FFCF73;--wood:#3A2618;--day:0;--night:1}
+.lm,.lm *{transition:background-color .9s ease,color .9s ease,border-color .9s ease,fill .9s ease,stroke .9s ease}
+.on-day{opacity:var(--day);transition:opacity 1s ease}
+.on-night{opacity:var(--night);transition:opacity 1s ease}
+/* Cambio de modo: el sol se pone y la luna sube */
+.sun-g{transform:translateY(calc(var(--night) * 260px));transition:transform 1.6s cubic-bezier(.5,0,.2,1),opacity 1.2s ease}
+.moon-g{transform:translateY(calc(var(--day) * 320px));transition:transform 1.6s cubic-bezier(.5,0,.2,1),opacity 1.2s ease}
+/* Parallax por puntero: cada capa se desplaza según su profundidad */
+.pz{transition:translate .7s cubic-bezier(.2,.7,.2,1),opacity 1s ease}
+.p0{translate:calc(var(--mx,0)*-4px) calc(var(--my,0)*-3px)}
+.p1{translate:calc(var(--mx,0)*-9px) calc(var(--my,0)*-5px)}
+.p2{translate:calc(var(--mx,0)*-14px) calc(var(--my,0)*-6px)}
+.p3{translate:calc(var(--mx,0)*-20px) calc(var(--my,0)*-8px)}
+.p4{translate:calc(var(--mx,0)*-28px) calc(var(--my,0)*-10px)}
+.p5{translate:calc(var(--mx,0)*-38px) calc(var(--my,0)*-12px)}
+.p6{translate:calc(var(--mx,0)*-48px) calc(var(--my,0)*-14px)}
+.p7{translate:calc(var(--mx,0)*-66px) calc(var(--my,0)*-18px)}
+.layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* Parallax por scroll de la portada */
+@keyframes lm-y{to{transform:translate3d(var(--x,0px),var(--d),0)}}
+@keyframes lm-text{to{transform:translateY(var(--d));opacity:0}}
+@supports (animation-timeline: scroll()){
+.sy{animation:lm-y linear both;animation-timeline:scroll(root);animation-range:0 900px}
+.s-far{--d:470px}.s-mid{--d:380px}.s-moon{--d:430px}.s-m1{--d:300px}.s-m2{--d:210px}.s-m3{--d:130px}.s-camp{--d:60px}.s-ff{--d:30px}.s-fg{--d:-30px}
+.s-fgl{--d:-50px;--x:-220px}.s-fgr{--d:-50px;--x:220px}
+.s-text{--d:320px;animation-name:lm-text;animation-range:0 620px}
+}
+/* Parallax por sección y apariciones al bajar: siguen el scroll con precisión */
+@keyframes lm-v{from{transform:translateY(var(--a,-70px))}to{transform:translateY(var(--b,70px))}}
+@keyframes lm-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes rise{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes stick{from{opacity:0;transform:translateY(26px) rotate(-12deg) scale(.82)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.7)}to{opacity:1;transform:none}}
+@keyframes ticket{from{opacity:0;transform:translateY(64px) rotate(2.5deg)}to{opacity:1;transform:none}}
+@supports (animation-timeline: view()){
+.vd{animation:lm-v linear both;animation-timeline:view();animation-range:cover}
+.trail{animation:lm-draw linear both;animation-timeline:view();animation-range:entry 20% cover 55%}
+.const{animation:lm-draw linear both;animation-timeline:view();animation-range:entry 30% cover 60%}
+.rv,.rv-stick,.pop,.rv-ticket{animation-timing-function:cubic-bezier(.2,.7,.2,1);animation-fill-mode:both;animation-timeline:view()}
+.rv{animation-name:rise;animation-range:entry 0% entry 80%}
+.rv-stick{animation-name:stick;animation-range:entry 0% entry 85%}
+.rv-ticket{animation-name:ticket;animation-range:entry 5% cover 42%}
+.pop{animation-name:pop}
+.d1{animation-range:entry 8% entry 88%}.d2{animation-range:entry 16% entry 96%}.d3{animation-range:entry 24% cover 52%}.d4{animation-range:entry 32% cover 56%}
+.l0{animation-range:cover 4% cover 11%}.l1{animation-range:cover 10% cover 17%}.l2{animation-range:cover 16% cover 23%}.l3{animation-range:cover 22% cover 29%}
+.l4{animation-range:cover 28% cover 35%}.l5{animation-range:cover 34% cover 41%}.l6{animation-range:cover 40% cover 47%}.l7{animation-range:cover 46% cover 53%}
+}
+.v-far{--a:-240px;--b:240px}.v-mid{--a:-150px;--b:150px}.v-moon{--a:-190px;--b:190px}.v-hill{--a:-60px;--b:60px}.v-fg{--a:70px;--b:-70px}.v-sun{--a:-90px;--b:150px}
+.bgx{position:absolute;left:0;width:100%;top:-260px;height:calc(100% + 520px);pointer-events:none}
+.bg-layer{position:absolute;left:0;width:100%;top:-90px;height:calc(100% + 180px);pointer-events:none}
+/* Luz de día: rayos, halo que respira, neblina, rocío */
+@keyframes rays{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.rays{transform-box:view-box;transform-origin:1060px 550px;animation:rays 22s ease-in-out infinite alternate}
+@keyframes breathe{50%{transform:scale(1.04)}}
+.breathe{transform-box:view-box;transform-origin:1060px 550px;animation:breathe 7s ease-in-out infinite}
+@keyframes mist{from{transform:translateX(-90px)}to{transform:translateX(90px)}}
+.mist{animation:mist 38s ease-in-out infinite alternate}
+@keyframes dew{0%,100%{opacity:0}50%{opacity:1}}
+.dew{animation:dew 3.6s ease-in-out infinite}
+/* Luz de día en movimiento: sombras de nubes, haces entre los pinos, ondas en la laguna */
+@keyframes cshadow{from{transform:translateX(-220px)}to{transform:translateX(260px)}}
+.cshadow{animation:cshadow 74s linear infinite alternate}
+@keyframes shaft{0%,100%{opacity:.06}50%{opacity:.2}}
+.shaft{animation:shaft 9s ease-in-out infinite}
+@keyframes ripple{from{transform:scale(.2);opacity:.9}to{transform:scale(1.8);opacity:0}}
+.ripple{transform-box:fill-box;transform-origin:50% 50%;animation:ripple 4.5s ease-out infinite}
+/* Pasto, cometa y bandera */
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.grass{transform-box:fill-box;transform-origin:50% 100%;animation:sway 2.6s ease-in-out infinite alternate}
+@keyframes kite{0%,100%{transform:translate(0,0) rotate(-4deg)}35%{transform:translate(14px,-18px) rotate(5deg)}70%{transform:translate(-10px,-8px) rotate(-2deg)}}
+.kite{transform-box:fill-box;transform-origin:50% 100%;animation:kite 9s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:skewY(-5deg)}50%{transform:skewY(5deg) scaleX(.94)}}
+.wave{transform-box:fill-box;transform-origin:0 50%;animation:wave 1.6s ease-in-out infinite}
+/* Polen y semillas que suben con el aire caliente */
+@keyframes po-drift{to{transform:translate(44px,-150px)}}
+@keyframes po-fade{0%,100%{opacity:0}25%,70%{opacity:.9}}
+.po{position:absolute;border-radius:50%;background:#FFFDF4;box-shadow:0 0 5px 1px rgba(255,255,255,.85);animation-name:po-drift,po-fade;animation-timing-function:linear,ease-in-out;animation-iteration-count:infinite,infinite}
+/* Banderines con viento */
+@keyframes flutter{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(6deg)}}
+.flag{transform-box:fill-box;transform-origin:50% 0;animation:flutter 2.8s ease-in-out infinite}
+/* Mariposas de día */
+.bf{position:absolute;width:22px;height:16px;animation:bf-drift 14s ease-in-out infinite}
+@keyframes bf-drift{0%,100%{transform:translate(0,0) rotate(-6deg)}20%{transform:translate(46px,-30px) rotate(8deg)}45%{transform:translate(90px,-8px) rotate(-4deg)}70%{transform:translate(40px,-52px) rotate(10deg)}85%{transform:translate(-10px,-26px) rotate(-8deg)}}
+@keyframes flap{to{transform:scaleX(.25)}}
+.wl{transform-box:fill-box;transform-origin:100% 50%;animation:flap .28s ease-in-out infinite alternate}
+.wr{transform-box:fill-box;transform-origin:0% 50%;animation:flap .28s ease-in-out infinite alternate}
+/* Noche: estrellas, fugaces, fuego, chispas, faroles, luciérnagas */
+.star{position:absolute;left:50%;border-radius:50%;background:transparent}
+@keyframes twk{50%{opacity:.25}}
+.twk{animation:twk 3.4s ease-in-out infinite}
+@keyframes shoot{0%,84%{transform:translate(0,0) rotate(22deg) scaleX(.2);opacity:0}86%{opacity:1}95%{transform:translate(420px,170px) rotate(22deg) scaleX(1);opacity:0}100%{opacity:0}}
+.shoot{position:absolute;width:190px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,250,235,0),#FFFAEB);transform-origin:100% 50%;animation:shoot 12s linear infinite}
+@keyframes cloud{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+.cloud{animation:cloud 26s ease-in-out infinite alternate}
+@keyframes birds{from{transform:translateX(-12%)}to{transform:translateX(112%)}}
+.birds{animation:birds 48s linear infinite}
+@keyframes flick{0%,100%{transform:scale(1,1)}30%{transform:scale(.9,1.1)}60%{transform:scale(1.07,.93)}80%{transform:scale(.96,1.05)}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick 1.5s ease-in-out infinite}
+@keyframes glow{50%{opacity:.6}}
+.glow{animation:glow 2.4s ease-in-out infinite}
+@keyframes spark-l{0%{transform:translate(0,0);opacity:0}12%{opacity:1}100%{transform:translate(-26px,-170px);opacity:0}}
+@keyframes spark-r{0%{transform:translate(0,0);opacity:0}12%{opacity:1}100%{transform:translate(30px,-190px);opacity:0}}
+.spark-l{transform-box:fill-box;animation:spark-l 3.2s ease-out infinite}
+.spark-r{transform-box:fill-box;animation:spark-r 3.8s ease-out infinite}
+@keyframes smoke{0%{transform:translateY(0);opacity:0}30%{opacity:.55}100%{transform:translateY(-60px);opacity:0}}
+.smoke{transform-box:fill-box;animation:smoke 5s ease-out infinite}
+@keyframes shim{50%{opacity:.3;transform:translateX(10px)}}
+.shim{animation:shim 4s ease-in-out infinite}
+@keyframes lamp{50%{transform:scale(1.15);opacity:.7}}
+.lamp{animation:lamp 3.4s ease-in-out infinite}
+.halo{position:absolute;left:-24px;top:-24px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(242,196,106,.3),rgba(242,196,106,0) 66%);pointer-events:none}
+@keyframes ff-drift{0%,100%{transform:translate(0,0)}25%{transform:translate(22px,-26px)}50%{transform:translate(-8px,-46px)}75%{transform:translate(-26px,-14px)}}
+@keyframes ff-blink{0%,100%{opacity:.1}45%{opacity:1}60%{opacity:.85}}
+.ff{position:absolute;border-radius:50%;background:#FFF5B8;box-shadow:0 0 6px 2px rgba(255,238,150,.9),0 0 22px 8px rgba(242,181,58,.4);animation-name:ff-drift,ff-blink;animation-timing-function:ease-in-out,ease-in-out;animation-iteration-count:infinite,infinite}
+.badge{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.badge:hover{transform:translateY(-6px) rotate(-5deg)}
+@media (prefers-reduced-motion: reduce){
+.sy,.vd,.trail,.const,.rv,.rv-stick,.pop,.rv-ticket,.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po{animation:none !important}
+.shoot,.spark-l,.spark-r,.smoke,.ripple,.po{opacity:0 !important}
+.pz{translate:none !important}
+.sun-g,.moon-g{transition:opacity 1s ease}
+}
+</style>
+<style>
+html{scroll-behavior:smooth}
+.ui{display:contents}
+.lm[data-mode="night"] .ui-day,.lm:not([data-mode="night"]) .ui-night{display:none}
+</style>
+</head>
+<body>
+<div class="lm" data-mode="night" style="width: 100%; background: var(--bg); color: var(--ink); font-family: Figtree, system-ui, sans-serif; font-size: 18px; line-height: 1.55;">
+
+  <header style="background: var(--band); color: #FFFFFF;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px;">
+      <a href="#" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #FFFFFF;">
+        <svg width="42" height="42" viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="46" stroke="#FFFFFF" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4 5"></circle><path d="M28 66L50 32L72 66M50 32V66M42 66L50 52L58 66" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span style="display: flex; flex-direction: column; line-height: 1.1;">
+          <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px;">Campamento Las Lomas</span>
+          <span style="font-size: 14px; opacity: 0.9;">Temporada Verano 2027 · 4 ene al 26 feb</span>
+        </span>
+      </a>
+      <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; font-weight: 700; font-size: 17px;">
+        <a href="#sendero" style="color: #FFFFFF; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;">La temporada</a>
+        <a href="#preguntas" style="color: #FFFFFF; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;">Preguntas</a>
+        <a href="#" style="color: #FFFFFF; min-height: 44px; display: inline-flex; align-items: center;">Ingresar</a>
+        <button type="button" data-action="toggle-mode" style="background: transparent; color: #FFFFFF; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; font-family: Figtree, system-ui, sans-serif; font-weight: 700; font-size: 16px; cursor: pointer;">
+          <span class="ui ui-night">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"></path></svg>
+            <span>Ver de día</span>
+          </span>
+          <span class="ui ui-day">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg>
+            <span>Ver de noche</span>
+          </span>
+        </button>
+        <a href="#pase" style="background: #FFFFFF; color: #2F5D2A; text-decoration: none; padding: 0 20px; min-height: 46px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
+      </nav>
+    </div>
+  </header>
+
+  <section aria-label="Portada" data-hero style="position: relative; height: 900px; overflow: hidden; background: #FBEAD0;">
+    <!-- Cielo: bandas planas de día y de noche -->
+    <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <rect x="0" y="0" width="1440" height="300" fill="#FBEAD0"></rect>
+      <rect x="0" y="300" width="1440" height="130" fill="#F9DDB6"></rect>
+      <rect x="0" y="430" width="1440" height="110" fill="#F6CD98"></rect>
+      <rect x="0" y="540" width="1440" height="360" fill="#F3BF84"></rect>
+      <g class="on-night">
+        <rect x="0" y="0" width="1440" height="300" fill="#060E1A"></rect>
+        <rect x="0" y="300" width="1440" height="130" fill="#0B1A2A"></rect>
+        <rect x="0" y="430" width="1440" height="110" fill="#122638"></rect>
+        <rect x="0" y="540" width="1440" height="360" fill="#1A3443"></rect>
+      </g>
+    </svg>
+    <!-- Estrellas en tres profundidades y estrellas fugaces -->
+    <div class="layer on-night sy s-far pz p0" aria-hidden="true">
+      <div class="star" style="top: 0; width: 1px; height: 1px; box-shadow: -1200px 250px rgba(255,250,235,0.55),-452px 25px rgba(255,250,235,0.55),865px 229px rgba(255,250,235,0.55),42px 262px rgba(255,250,235,0.55),-67px 158px rgba(255,250,235,0.55),-676px 400px rgba(255,250,235,0.55),-863px 213px rgba(255,250,235,0.55),211px 463px rgba(255,250,235,0.55),-282px 47px rgba(255,250,235,0.55),-678px 412px rgba(255,250,235,0.55),222px 311px rgba(255,250,235,0.55),-51px 131px rgba(255,250,235,0.55),-461px 446px rgba(255,250,235,0.55),-1172px 108px rgba(255,250,235,0.55),182px 399px rgba(255,250,235,0.55),-1168px 215px rgba(255,250,235,0.55),929px 292px rgba(255,250,235,0.55),-967px 342px rgba(255,250,235,0.55),1102px 179px rgba(255,250,235,0.55),963px 10px rgba(255,250,235,0.55),522px 453px rgba(255,250,235,0.55),1078px 161px rgba(255,250,235,0.55),-800px 448px rgba(255,250,235,0.55),1075px 410px rgba(255,250,235,0.55),1200px 448px rgba(255,250,235,0.55),-165px 143px rgba(255,250,235,0.55),277px 13px rgba(255,250,235,0.55),1085px 466px rgba(255,250,235,0.55),-356px 490px rgba(255,250,235,0.55),-1197px 373px rgba(255,250,235,0.55),1083px 308px rgba(255,250,235,0.55),430px 285px rgba(255,250,235,0.55),847px 243px rgba(255,250,235,0.55),1026px 559px rgba(255,250,235,0.55),-179px 454px rgba(255,250,235,0.55),19px 126px rgba(255,250,235,0.55),-1085px 29px rgba(255,250,235,0.55),785px 61px rgba(255,250,235,0.55),-358px 309px rgba(255,250,235,0.55),-296px 264px rgba(255,250,235,0.55),-946px 212px rgba(255,250,235,0.55),-781px 321px rgba(255,250,235,0.55),122px 518px rgba(255,250,235,0.55),-964px 549px rgba(255,250,235,0.55),1186px 434px rgba(255,250,235,0.55),156px 207px rgba(255,250,235,0.55),867px 362px rgba(255,250,235,0.55),5px 171px rgba(255,250,235,0.55),79px 144px rgba(255,250,235,0.55),1110px 319px rgba(255,250,235,0.55),985px 82px rgba(255,250,235,0.55),-818px 538px rgba(255,250,235,0.55),458px 161px rgba(255,250,235,0.55),784px 204px rgba(255,250,235,0.55),909px 271px rgba(255,250,235,0.55),22px 129px rgba(255,250,235,0.55),-959px 447px rgba(255,250,235,0.55),896px 147px rgba(255,250,235,0.55),618px 191px rgba(255,250,235,0.55),868px 243px rgba(255,250,235,0.55),-1198px 11px rgba(255,250,235,0.55),-1121px 312px rgba(255,250,235,0.55),-490px 452px rgba(255,250,235,0.55),-440px 358px rgba(255,250,235,0.55),1176px 276px rgba(255,250,235,0.55),617px 97px rgba(255,250,235,0.55),369px 277px rgba(255,250,235,0.55),-614px 148px rgba(255,250,235,0.55),-7px 349px rgba(255,250,235,0.55),-98px 169px rgba(255,250,235,0.55),-21px 285px rgba(255,250,235,0.55),-918px 353px rgba(255,250,235,0.55),759px 278px rgba(255,250,235,0.55),144px 120px rgba(255,250,235,0.55),656px 209px rgba(255,250,235,0.55),-950px 320px rgba(255,250,235,0.55),-273px 111px rgba(255,250,235,0.55),28px 516px rgba(255,250,235,0.55),-255px 92px rgba(255,250,235,0.55),811px 467px rgba(255,250,235,0.55),543px 135px rgba(255,250,235,0.55),-522px 132px rgba(255,250,235,0.55),-451px 514px rgba(255,250,235,0.55),460px 315px rgba(255,250,235,0.55),-186px 288px rgba(255,250,235,0.55),-137px 416px rgba(255,250,235,0.55),-1167px 439px rgba(255,250,235,0.55),676px 10px rgba(255,250,235,0.55),681px 272px rgba(255,250,235,0.55),275px 5px rgba(255,250,235,0.55),827px 546px rgba(255,250,235,0.55),956px 139px rgba(255,250,235,0.55),-797px 206px rgba(255,250,235,0.55),-59px 559px rgba(255,250,235,0.55),603px 263px rgba(255,250,235,0.55),-759px 317px rgba(255,250,235,0.55),250px 556px rgba(255,250,235,0.55),-446px 47px rgba(255,250,235,0.55),-84px 538px rgba(255,250,235,0.55),798px 40px rgba(255,250,235,0.55),189px 406px rgba(255,250,235,0.55),861px 279px rgba(255,250,235,0.55),-326px 102px rgba(255,250,235,0.55),988px 369px rgba(255,250,235,0.55),-869px 310px rgba(255,250,235,0.55),-375px 360px rgba(255,250,235,0.55),817px 15px rgba(255,250,235,0.55),149px 488px rgba(255,250,235,0.55),739px 432px rgba(255,250,235,0.55),-819px 118px rgba(255,250,235,0.55),591px 434px rgba(255,250,235,0.55),-968px 402px rgba(255,250,235,0.55),834px 212px rgba(255,250,235,0.55),-373px 281px rgba(255,250,235,0.55),-732px 46px rgba(255,250,235,0.55),59px 443px rgba(255,250,235,0.55),1160px 297px rgba(255,250,235,0.55),1089px 494px rgba(255,250,235,0.55),-310px 508px rgba(255,250,235,0.55),-65px 370px rgba(255,250,235,0.55),472px 469px rgba(255,250,235,0.55),-857px 489px rgba(255,250,235,0.55),-1160px 183px rgba(255,250,235,0.55),1177px 386px rgba(255,250,235,0.55),1045px 437px rgba(255,250,235,0.55),-1184px 5px rgba(255,250,235,0.55),16px 0px rgba(255,250,235,0.55),26px 333px rgba(255,250,235,0.55),18px 272px rgba(255,250,235,0.55),-581px 112px rgba(255,250,235,0.55),716px 65px rgba(255,250,235,0.55),-1104px 504px rgba(255,250,235,0.55),-230px 518px rgba(255,250,235,0.55),-354px 195px rgba(255,250,235,0.55),940px 155px rgba(255,250,235,0.55),-63px 237px rgba(255,250,235,0.55),-508px 538px rgba(255,250,235,0.55),273px 70px rgba(255,250,235,0.55),109px 349px rgba(255,250,235,0.55),353px 58px rgba(255,250,235,0.55),-879px 70px rgba(255,250,235,0.55),-936px 457px rgba(255,250,235,0.55),443px 10px rgba(255,250,235,0.55),2px 213px rgba(255,250,235,0.55),267px 530px rgba(255,250,235,0.55),-931px 412px rgba(255,250,235,0.55),882px 464px rgba(255,250,235,0.55),167px 66px rgba(255,250,235,0.55),-208px 550px rgba(255,250,235,0.55),375px 416px rgba(255,250,235,0.55),381px 158px rgba(255,250,235,0.55),-325px 542px rgba(255,250,235,0.55),290px 325px rgba(255,250,235,0.55),-7px 284px rgba(255,250,235,0.55),476px 163px rgba(255,250,235,0.55),-268px 441px rgba(255,250,235,0.55),-977px 262px rgba(255,250,235,0.55),303px 410px rgba(255,250,235,0.55),176px 436px rgba(255,250,235,0.55),-387px 259px rgba(255,250,235,0.55),1070px 70px rgba(255,250,235,0.55),-890px 267px rgba(255,250,235,0.55),-27px 456px rgba(255,250,235,0.55),-196px 263px rgba(255,250,235,0.55),477px 414px rgba(255,250,235,0.55),833px 41px rgba(255,250,235,0.55),-424px 513px rgba(255,250,235,0.55),-636px 149px rgba(255,250,235,0.55),-1027px 482px rgba(255,250,235,0.55),-1039px 444px rgba(255,250,235,0.55);"></div>
+      <div class="star twk" style="top: 0; width: 2px; height: 2px; box-shadow: -1200px 14px #FFF7E6,-291px 296px #FFF7E6,-591px 19px #FFF7E6,-1003px 331px #FFF7E6,297px 269px #FFF7E6,769px 511px #FFF7E6,-931px 429px #FFF7E6,-649px 99px #FFF7E6,-153px 96px #FFF7E6,765px 290px #FFF7E6,245px 430px #FFF7E6,112px 216px #FFF7E6,-92px 64px #FFF7E6,-924px 22px #FFF7E6,163px 69px #FFF7E6,1050px 286px #FFF7E6,-1113px 50px #FFF7E6,1032px 297px #FFF7E6,122px 215px #FFF7E6,705px 218px #FFF7E6,437px 323px #FFF7E6,291px 177px #FFF7E6,1164px 363px #FFF7E6,66px 188px #FFF7E6,-546px 20px #FFF7E6,311px 533px #FFF7E6,-75px 174px #FFF7E6,-569px 448px #FFF7E6,-744px 349px #FFF7E6,988px 212px #FFF7E6,737px 326px #FFF7E6,899px 182px #FFF7E6,463px 195px #FFF7E6,-909px 47px #FFF7E6,717px 376px #FFF7E6,39px 451px #FFF7E6,-305px 10px #FFF7E6,-758px 368px #FFF7E6,342px 82px #FFF7E6,36px 386px #FFF7E6,-1104px 477px #FFF7E6,-324px 451px #FFF7E6,1127px 259px #FFF7E6,1040px 370px #FFF7E6,1170px 236px #FFF7E6,-328px 25px #FFF7E6,-1024px 435px #FFF7E6,229px 247px #FFF7E6,-53px 192px #FFF7E6,-734px 299px #FFF7E6,-341px 412px #FFF7E6,254px 55px #FFF7E6,85px 80px #FFF7E6,-107px 411px #FFF7E6,-498px 251px #FFF7E6,1136px 114px #FFF7E6,613px 263px #FFF7E6,-308px 198px #FFF7E6,419px 482px #FFF7E6,-148px 540px #FFF7E6;"></div>
+      <div class="star twk" style="top: 0; width: 2px; height: 2px; box-shadow: -1199px 468px #FFF7E6,1098px 524px #FFF7E6,510px 55px #FFF7E6,578px 64px #FFF7E6,-878px 315px #FFF7E6,-745px 118px #FFF7E6,590px 151px #FFF7E6,1147px 323px #FFF7E6,798px 154px #FFF7E6,-753px 256px #FFF7E6,-127px 222px #FFF7E6,701px 230px #FFF7E6,-460px 268px #FFF7E6,-234px 105px #FFF7E6,-259px 510px #FFF7E6,436px 109px #FFF7E6,506px 408px #FFF7E6,-636px 78px #FFF7E6,-222px 533px #FFF7E6,404px 279px #FFF7E6,-863px 191px #FFF7E6,572px 472px #FFF7E6,-945px 372px #FFF7E6,-311px 396px #FFF7E6,-983px 79px #FFF7E6,-335px 365px #FFF7E6,714px 93px #FFF7E6,-497px 87px #FFF7E6,-1197px 115px #FFF7E6,338px 130px #FFF7E6,-67px 360px #FFF7E6,-953px 434px #FFF7E6,14px 150px #FFF7E6,834px 193px #FFF7E6,-1039px 394px #FFF7E6,63px 115px #FFF7E6,-595px 438px #FFF7E6,242px 100px #FFF7E6,759px 461px #FFF7E6,-778px 269px #FFF7E6,310px 345px #FFF7E6,209px 255px #FFF7E6,-900px 158px #FFF7E6,-623px 454px #FFF7E6,1152px 474px #FFF7E6,308px 180px #FFF7E6,1170px 535px #FFF7E6,891px 163px #FFF7E6,-607px 73px #FFF7E6,1115px 200px #FFF7E6,913px 169px #FFF7E6,304px 323px #FFF7E6,450px 82px #FFF7E6,454px 120px #FFF7E6,659px 240px #FFF7E6,-364px 371px #FFF7E6,47px 517px #FFF7E6,-913px 84px #FFF7E6,987px 471px #FFF7E6,-134px 446px #FFF7E6; animation-delay: -1.7s;"></div>
+    </div>
+    <div class="layer on-night sy s-mid pz p1" aria-hidden="true">
+      <div class="star twk" style="top: 0; width: 3px; height: 3px; box-shadow: -1199px 457px #FFFFFF,-1087px 145px #FFFFFF,-632px 284px #FFFFFF,-16px 461px #FFFFFF,-1193px 253px #FFFFFF,-419px 249px #FFFFFF,-1101px 391px #FFFFFF,800px 35px #FFFFFF,170px 192px #FFFFFF,-430px 255px #FFFFFF,-896px 188px #FFFFFF,-682px 147px #FFFFFF,832px 436px #FFFFFF,898px 309px #FFFFFF,-1085px 77px #FFFFFF,-607px 186px #FFFFFF,984px 242px #FFFFFF,-1170px 186px #FFFFFF,72px 42px #FFFFFF,60px 171px #FFFFFF,-977px 35px #FFFFFF,-478px 436px #FFFFFF,73px 401px #FFFFFF,-56px 418px #FFFFFF,-111px 61px #FFFFFF,298px 150px #FFFFFF; animation-delay: -0.8s;"></div>
+      <div class="shoot" style="left: 16%; top: 90px;"></div>
+      <div class="shoot" style="left: 50%; top: 36px; animation-duration: 15s; animation-delay: -6s;"></div>
+    </div>
+    <!-- Sol de día, luna de noche -->
+    <svg class="layer sy s-moon pz p1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <g class="on-day sun-g">
+        <path class="rays" d="M1060 550L640 0H780ZM1060 550L900 0H1000ZM1060 550L1110 0H1210ZM1060 550L1340 0H1440V40ZM1060 550L1440 220V320Z" fill="#FFF7E8" opacity="0.55"></path>
+        <g class="breathe">
+          <circle cx="1060" cy="550" r="210" fill="none" stroke="#FCE3BD" stroke-width="16"></circle>
+          <circle cx="1060" cy="550" r="160" fill="none" stroke="#FDE9C9" stroke-width="20"></circle>
+        </g>
+        <circle cx="1060" cy="550" r="108" fill="#FFF4DE"></circle>
+      </g>
+      <g class="on-night moon-g">
+        <circle cx="1080" cy="250" r="170" fill="#F4EFDF" opacity="0.04"></circle>
+        <circle cx="1080" cy="250" r="118" fill="#F4EFDF" opacity="0.07"></circle>
+        <circle cx="1080" cy="250" r="84" fill="#F4EFDF" opacity="0.1"></circle>
+        <circle cx="1080" cy="250" r="58" fill="#F4EFDF"></circle>
+        <circle cx="1062" cy="236" r="9" fill="#E3DCC4"></circle>
+        <circle cx="1098" cy="268" r="6" fill="#E3DCC4"></circle>
+        <circle cx="1092" cy="226" r="4" fill="#E3DCC4"></circle>
+      </g>
+    </svg>
+    <!-- Nubes y aves de día -->
+    <svg class="layer on-day pz p1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <g class="cloud" fill="#FFF6E8">
+        <ellipse cx="240" cy="190" rx="74" ry="20"></ellipse><ellipse cx="206" cy="178" rx="36" ry="26"></ellipse><ellipse cx="262" cy="170" rx="44" ry="32"></ellipse>
+        <ellipse cx="1250" cy="236" rx="64" ry="18"></ellipse><ellipse cx="1222" cy="226" rx="30" ry="20"></ellipse><ellipse cx="1268" cy="220" rx="36" ry="26"></ellipse>
+      </g>
+      <g class="cloud" fill="#FFF6E8" style="animation-duration: 34s; animation-delay: -12s;">
+        <ellipse cx="760" cy="120" rx="60" ry="16"></ellipse><ellipse cx="736" cy="112" rx="28" ry="18"></ellipse><ellipse cx="778" cy="106" rx="34" ry="24"></ellipse>
+      </g>
+    </svg>
+    <svg class="birds on-day" aria-hidden="true" viewBox="0 0 300 80" style="position: absolute; left: 0; top: 170px; width: 300px; height: 80px; pointer-events: none;">
+      <path d="M10 40q8-10 16 0q8-10 16 0M60 22q7-9 14 0q7-9 14 0M48 58q6-8 12 0q6-8 12 0M110 34q8-10 16 0q8-10 16 0M150 14q6-8 12 0q6-8 12 0" fill="none" stroke="#6B4A22" stroke-width="2.2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="birds on-day" aria-hidden="true" viewBox="0 0 300 80" style="position: absolute; left: 0; top: 96px; width: 190px; height: 50px; pointer-events: none; animation-duration: 66s; animation-delay: -28s;">
+      <path d="M20 44q6-8 12 0q6-8 12 0M70 30q5-7 10 0q5-7 10 0M120 40q5-7 10 0q5-7 10 0M165 24q5-7 10 0q5-7 10 0" fill="none" stroke="#8C6A3E" stroke-width="1.8" stroke-linecap="round"></path>
+    </svg>
+    <!-- Cordillera lejana con nieve -->
+    <svg class="layer sy s-m1 pz p2" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 630L120 550L210 595L330 485L430 560L540 470L650 555L760 510L880 580L1000 502L1120 572L1230 520L1340 582L1440 540V900H0Z" style="fill: var(--mFar);"></path>
+      <path d="M330 485L355 508L340 512L362 528L330 520ZM540 470L566 496L548 500L572 516L540 508ZM1000 502L1024 524L1008 528L1030 542L1000 536Z" style="fill: var(--snow);"></path>
+    </svg>
+    <!-- Cerros medios y laguna con reflejo -->
+    <svg class="layer sy s-m2 pz p3" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 700L140 615L260 670L400 580L520 670L660 602L790 688L930 612L1060 682L1200 622L1320 678L1440 642V900H0Z" style="fill: var(--mMid);"></path>
+      <g class="on-day"><g class="cshadow" fill="#1E3E1A" opacity="0.11"><ellipse cx="320" cy="662" rx="150" ry="20"></ellipse><ellipse cx="1010" cy="654" rx="190" ry="24"></ellipse></g></g>
+      <rect x="0" y="702" width="1440" height="44" style="fill: var(--lake);"></rect>
+      <g class="on-day">
+        <path class="shim" d="M990 716H1130M1010 726H1110M1030 736H1090" stroke="#FFF4DE" stroke-width="5" stroke-linecap="round"></path>
+        <ellipse class="ripple" cx="1060" cy="724" rx="44" ry="8" fill="none" stroke="#FFFFFF" stroke-width="2"></ellipse>
+        <ellipse class="ripple" cx="1060" cy="724" rx="44" ry="8" fill="none" stroke="#FFFFFF" stroke-width="2" style="animation-delay: -1.5s;"></ellipse>
+        <ellipse class="ripple" cx="1060" cy="724" rx="44" ry="8" fill="none" stroke="#FFFFFF" stroke-width="2" style="animation-delay: -3s;"></ellipse>
+        <ellipse class="ripple" cx="460" cy="730" rx="30" ry="6" fill="none" stroke="#FFFFFF" stroke-width="1.6" style="animation-delay: -2.2s;"></ellipse>
+        <path class="dew" d="M1000 707L1001.25 710.75L1005 712L1001.25 713.25L1000 717L998.75 713.25L995 712L998.75 710.75ZM1080 716L1081.5 720.5L1086 722L1081.5 723.5L1080 728L1078.5 723.5L1074 722L1078.5 720.5ZM1150 710L1151 713L1154 714L1151 715L1150 718L1149 715L1146 714L1149 713ZM1046 734L1047 737L1050 738L1047 739L1046 742L1045 739L1042 738L1045 737Z" fill="#FFFFFF"></path>
+        <g class="mist"><ellipse cx="420" cy="694" rx="380" ry="16" fill="#FFFFFF" opacity="0.5"></ellipse><ellipse cx="1120" cy="700" rx="330" ry="13" fill="#FFFFFF" opacity="0.42"></ellipse></g>
+      </g>
+      <g class="on-night">
+        <path class="shim" d="M1040 714H1120M1054 724H1106M1066 734H1094" stroke="#F4EFDF" stroke-width="4" stroke-linecap="round"></path>
+      </g>
+    </svg>
+    <!-- Bosque -->
+    <svg class="layer sy s-m3 pz p4" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 750C240 714 480 742 720 726S1200 710 1440 736V900H0ZM20 668L35 700L28 700L43 728L33 728L49 748L-9 748L7 728L-3 728L12 700L5 700ZM76 644L96 686L87 686L106 722L93 722L114 748L38 748L59 722L46 722L65 686L56 686ZM132 678L146 706L139 706L152 731L144 731L158 748L106 748L120 731L112 731L125 706L118 706ZM188 652L207 690L198 690L215 724L204 724L223 748L153 748L172 724L161 724L178 690L169 690ZM244 630L267 677L256 677L278 719L264 719L287 748L201 748L224 719L210 719L232 677L221 677ZM300 664L316 698L309 698L324 727L314 727L331 748L269 748L286 727L276 727L291 698L284 698ZM356 682L369 708L363 708L375 732L367 732L380 748L332 748L345 732L337 732L349 708L343 708ZM412 648L431 688L422 688L441 723L429 723L449 748L375 748L395 723L383 723L402 688L393 688ZM468 658L485 694L477 694L494 726L483 726L501 748L435 748L453 726L442 726L459 694L451 694ZM524 674L538 704L531 704L545 730L536 730L551 748L497 748L512 730L503 730L517 704L510 704ZM580 636L602 681L591 681L612 720L599 720L621 748L539 748L561 720L548 720L569 681L558 681ZM636 662L653 696L645 696L661 727L650 727L668 748L604 748L622 727L611 727L627 696L619 696ZM692 678L706 706L699 706L712 731L704 731L718 748L666 748L680 731L672 731L685 706L678 706ZM748 650L767 689L758 689L776 724L764 724L784 748L712 748L732 724L720 724L738 689L729 689ZM804 628L827 676L816 676L838 718L824 718L848 748L760 748L784 718L770 718L792 676L781 676ZM860 668L875 700L868 700L883 728L873 728L889 748L831 748L847 728L837 728L852 700L845 700ZM916 656L934 693L925 693L942 725L931 725L950 748L882 748L901 725L890 725L907 693L898 693ZM972 680L985 707L979 707L991 731L983 731L997 748L947 748L961 731L953 731L965 707L959 707ZM1028 642L1048 684L1039 684L1058 722L1046 722L1067 748L989 748L1010 722L998 722L1017 684L1008 684ZM1084 660L1101 695L1093 695L1109 726L1099 726L1116 748L1052 748L1069 726L1059 726L1075 695L1067 695ZM1140 672L1155 702L1148 702L1162 729L1153 729L1168 748L1112 748L1127 729L1118 729L1132 702L1125 702ZM1196 638L1217 682L1207 682L1227 721L1214 721L1236 748L1156 748L1178 721L1165 721L1185 682L1175 682ZM1252 654L1270 692L1262 692L1279 725L1268 725L1287 748L1217 748L1236 725L1225 725L1242 692L1234 692ZM1308 676L1322 705L1315 705L1329 730L1320 730L1334 748L1282 748L1296 730L1287 730L1301 705L1294 705ZM1364 648L1383 688L1374 688L1393 723L1381 723L1401 748L1327 748L1347 723L1335 723L1354 688L1345 688ZM1420 664L1436 698L1429 698L1444 727L1434 727L1451 748L1389 748L1406 727L1396 727L1411 698L1404 698Z" style="fill: var(--mNear);"></path>
+      <g class="on-day"><g class="mist" style="animation-duration: 52s; animation-delay: -20s;"><ellipse cx="760" cy="754" rx="470" ry="14" fill="#FFFFFF" opacity="0.32"></ellipse></g></g>
+    </svg>
+    <!-- Haces de luz que cruzan el bosque -->
+    <svg class="layer on-day sy s-m3 pz p5" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path class="shaft" d="M1440 160L980 900H1120L1440 330Z" fill="#FFF7E8"></path>
+      <path class="shaft" d="M1440 420L1180 900H1290L1440 560Z" fill="#FFF7E8" style="animation-delay: -3s;"></path>
+      <path class="shaft" d="M1340 0L700 900H830L1440 60Z" fill="#FFF7E8" style="animation-delay: -6s;"></path>
+    </svg>
+    <!-- Campamento: carpas, banderines de equipo, fogata y letrero -->
+    <svg class="layer sy s-camp pz p5" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <radialGradient id="lm-warm"><stop offset="0" stop-color="#FFC765" stop-opacity="0.6"></stop><stop offset="1" stop-color="#FFC765" stop-opacity="0"></stop></radialGradient>
+      </defs>
+      <path d="M0 806C240 786 480 812 720 798S1200 780 1440 800V900H0Z" style="fill: var(--meadow);"></path>
+      <g class="on-day">
+        <path class="dew" d="M180 837L181.25 840.75L185 842L181.25 843.25L180 847L178.75 843.25L175 842L178.75 840.75ZM372 854L373 857L376 858L373 859L372 862L371 859L368 858L371 857ZM610 841L611.25 844.75L615 846L611.25 847.25L610 851L608.75 847.25L605 846L608.75 844.75ZM905 846L906 849L909 850L906 851L905 854L904 851L901 850L904 849ZM1230 831L1231.25 834.75L1235 836L1231.25 837.25L1230 841L1228.75 837.25L1225 836L1228.75 834.75Z" fill="#FFFFFF"></path>
+        <path class="dew" d="M262 846L263 849L266 850L263 851L262 854L261 851L258 850L261 849ZM480 845L481.25 848.75L485 850L481.25 851.25L480 855L478.75 851.25L475 850L478.75 848.75ZM1000 855L1001.25 858.75L1005 860L1001.25 861.25L1000 865L998.75 861.25L995 860L998.75 858.75ZM1120 842L1121 845L1124 846L1121 847L1120 850L1119 847L1116 846L1119 845ZM1350 841L1351.25 844.75L1355 846L1351.25 847.25L1350 851L1348.75 847.25L1345 846L1348.75 844.75Z" fill="#FFFFFF" style="animation-delay: -1.8s;"></path>
+      </g>
+      <g class="on-night">
+        <circle class="glow" cx="790" cy="840" r="200" fill="url(#lm-warm)"></circle>
+        <ellipse cx="520" cy="814" rx="100" ry="56" fill="url(#lm-warm)"></ellipse>
+        <ellipse cx="1045" cy="818" rx="108" ry="60" fill="url(#lm-warm)"></ellipse>
+      </g>
+      <path d="M420 814V700M1150 808V690" style="stroke: var(--wood);" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M420 706Q785 800 1150 696" fill="none" style="stroke: var(--wood);" stroke-width="2"></path>
+      <path class="flag" d="M455 717L473 717L464 739Z" fill="#4F8A3C"></path>
+      <path class="flag" d="M508 728L526 728L517 750Z" fill="#C8693F" style="animation-delay: -0.4s;"></path>
+      <path class="flag" d="M562 736L580 736L571 758Z" fill="#5B9BC2" style="animation-delay: -0.8s;"></path>
+      <path class="flag" d="M615 743L633 743L624 765Z" fill="#4F8A3C" style="animation-delay: -1.2s;"></path>
+      <path class="flag" d="M669 748L687 748L678 770Z" fill="#C8693F" style="animation-delay: -1.6s;"></path>
+      <path class="flag" d="M722 750L740 750L731 772Z" fill="#5B9BC2" style="animation-delay: -2s;"></path>
+      <path class="flag" d="M776 751L794 751L785 773Z" fill="#4F8A3C" style="animation-delay: -2.4s;"></path>
+      <path class="flag" d="M829 749L847 749L838 771Z" fill="#C8693F" style="animation-delay: -0.2s;"></path>
+      <path class="flag" d="M883 745L901 745L892 767Z" fill="#5B9BC2" style="animation-delay: -0.6s;"></path>
+      <path class="flag" d="M936 739L954 739L945 761Z" fill="#4F8A3C" style="animation-delay: -1s;"></path>
+      <path class="flag" d="M990 731L1008 731L999 753Z" fill="#C8693F" style="animation-delay: -1.4s;"></path>
+      <path class="flag" d="M1043 720L1061 720L1052 742Z" fill="#5B9BC2" style="animation-delay: -1.8s;"></path>
+      <path class="flag" d="M1097 708L1115 708L1106 730Z" fill="#4F8A3C" style="animation-delay: -2.2s;"></path>
+      <g class="on-night">
+        <path d="M482 725a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M535 735a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M589 743a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M642 749a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M696 752a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M749 754a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M803 753a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M856 750a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M910 745a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M963 738a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M1017 729a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M1070 717a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" fill="#FFD27A" opacity="0.28"></path>
+        <path class="twk" d="M488 725a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M541 735a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M595 743a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M648 749a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M702 752a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M755 754a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M809 753a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M862 750a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M916 745a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M969 738a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M1023 729a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M1076 717a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" fill="#FFE9B0"></path>
+      </g>
+      <path d="M440 836L520 730L600 836Z" style="fill: var(--tent);"></path>
+      <path d="M520 836V770L552 836Z" style="fill: var(--door);"></path>
+      <path d="M612 826L662 760L712 826Z" style="fill: var(--tent);"></path>
+      <path d="M662 826V786L682 826Z" style="fill: var(--door);"></path>
+      <path d="M960 842L1045 732L1130 842Z" style="fill: var(--tent);"></path>
+      <path d="M1045 842V776L1080 842Z" style="fill: var(--door);"></path>
+      <g class="on-night" fill="#FFE9B0" opacity="0.45">
+        <path class="twk" d="M520 836V770L552 836Z"></path>
+        <path class="twk" d="M662 826V786L682 826Z" style="animation-delay: -1.3s;"></path>
+        <path class="twk" d="M1045 842V776L1080 842Z" style="animation-delay: -2.1s;"></path>
+      </g>
+      <path d="M1240 840V642" style="stroke: var(--wood);" stroke-width="5" stroke-linecap="round"></path>
+      <path class="wave" d="M1240 644L1306 664L1240 684Z" fill="#2F5D2A"></path>
+      <g class="on-day">
+        <g class="kite">
+          <path d="M250 560L282 602L250 656L218 602Z" fill="#C8693F"></path>
+          <path d="M250 560L282 602H250ZM250 602V656L218 602Z" fill="#5B9BC2"></path>
+          <path d="M250 560V656M218 602H282" stroke="#6B4A22" stroke-width="1.4"></path>
+          <path d="M250 656c-8 12 8 20 0 34s8 20 0 34" fill="none" stroke="#6B4A22" stroke-width="1.4"></path>
+          <path d="M242 672l10-5 1 10zM242 706l10-5 1 10z" fill="#C8693F"></path>
+          <path d="M250 656Q300 760 330 772" fill="none" stroke="#6B4A22" stroke-width="1.1"></path>
+        </g>
+      </g>
+      
+        <path class="grass" d="M85 846q-2-14 4-24q3 10 1 24zM90 846q2-16 8-22q-1 12-4 22zM96 846q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: 0s;"></path>
+      
+        <path class="grass" d="M195 852q-2-14 4-24q3 10 1 24zM200 852q2-16 8-22q-1 12-4 22zM206 852q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -0.43s;"></path>
+      
+        <path class="grass" d="M381 858q-2-14 4-24q3 10 1 24zM386 858q2-16 8-22q-1 12-4 22zM392 858q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -0.86s;"></path>
+      
+        <path class="grass" d="M465 850q-2-14 4-24q3 10 1 24zM470 850q2-16 8-22q-1 12-4 22zM476 850q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -1.29s;"></path>
+      
+        <path class="grass" d="M715 862q-2-14 4-24q3 10 1 24zM720 862q2-16 8-22q-1 12-4 22zM726 862q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -1.72s;"></path>
+      
+        <path class="grass" d="M855 860q-2-14 4-24q3 10 1 24zM860 860q2-16 8-22q-1 12-4 22zM866 860q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -2.15s;"></path>
+      
+        <path class="grass" d="M900 852q-2-14 4-24q3 10 1 24zM905 852q2-16 8-22q-1 12-4 22zM911 852q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -2.58s;"></path>
+      
+        <path class="grass" d="M1175 850q-2-14 4-24q3 10 1 24zM1180 850q2-16 8-22q-1 12-4 22zM1186 850q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -0.41s;"></path>
+      
+        <path class="grass" d="M1315 846q-2-14 4-24q3 10 1 24zM1320 846q2-16 8-22q-1 12-4 22zM1326 846q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -0.84s;"></path>
+      
+        <path class="grass" d="M1395 852q-2-14 4-24q3 10 1 24zM1400 852q2-16 8-22q-1 12-4 22zM1406 852q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -1.27s;"></path>
+      
+        <path class="grass" d="M145 868q-2-14 4-24q3 10 1 24zM150 868q2-16 8-22q-1 12-4 22zM156 868q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -1.7s;"></path>
+      
+        <path class="grass" d="M635 870q-2-14 4-24q3 10 1 24zM640 870q2-16 8-22q-1 12-4 22zM646 870q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -2.13s;"></path>
+      
+        <path class="grass" d="M1095 866q-2-14 4-24q3 10 1 24zM1100 866q2-16 8-22q-1 12-4 22zM1106 866q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -2.56s;"></path>
+      
+        <path class="grass" d="M1245 870q-2-14 4-24q3 10 1 24zM1250 870q2-16 8-22q-1 12-4 22zM1256 870q6-12 12-16q-4 10-8 16z" style="fill: var(--mNear); animation-delay: -0.39s;"></path>
+      
+      <path d="M330 862V770" style="stroke: var(--wood);" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M300 776h64l10 9-10 9h-64zM362 802h-64l-10 9 10 9h64z" style="fill: var(--wood);"></path>
+      <path d="M688 860h54M846 862h54" style="stroke: var(--wood);" stroke-width="11" stroke-linecap="round"></path>
+      <path d="M758 854L822 840M758 840L822 854" style="stroke: var(--wood);" stroke-width="9" stroke-linecap="round"></path>
+      <path class="flame" d="M790 846c-20 0-30-14-26-30 4-13 14-18 16-34 9 10 9 18 14 21 3-10 1-18-2-28 18 10 30 28 27 47-2 15-12 24-29 24z" fill="#F2B53A"></path>
+      <path class="flame" d="M790 846c-12 0-18-9-15-19 2-8 9-11 10-21 6 6 6 11 9 13 2-6 1-11-1-17 11 6 18 17 16 29-1 9-8 15-19 15z" fill="#F08A3C" style="animation-duration: 1.2s; animation-delay: -0.4s;"></path>
+      <path class="flame" d="M790 846c-6 0-9-5-8-10 1-4 5-6 5-11 3 3 4 6 5 7 1-3 0-6 0-9 6 3 9 9 8 15-1 5-4 8-10 8z" fill="#FFF1C2" style="animation-duration: 0.9s; animation-delay: -0.2s;"></path>
+      <g class="on-day">
+        <path class="smoke" d="M792 788c-8-10 8-18 0-28s8-18 0-28" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+        <path class="smoke" d="M800 792c-8-10 8-18 0-28s8-18 0-28" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" style="animation-delay: -2.5s;"></path>
+      </g>
+      <g class="on-night" fill="#FFD27A">
+        <circle class="spark-l" cx="788" cy="810" r="2.2"></circle>
+        <circle class="spark-r" cx="792" cy="812" r="1.8" style="animation-delay: -0.7s;"></circle>
+        <circle class="spark-l" cx="784" cy="814" r="1.6" style="animation-delay: -1.4s;"></circle>
+        <circle class="spark-r" cx="796" cy="808" r="2.4" style="animation-delay: -2.1s;"></circle>
+        <circle class="spark-l" cx="790" cy="806" r="1.8" style="animation-delay: -2.8s;"></circle>
+        <circle class="spark-r" cx="786" cy="812" r="1.5" style="animation-delay: -3.3s;"></circle>
+      </g>
+    </svg>
+    <!-- Luciérnagas sobre el prado -->
+    <div class="layer on-night sy s-ff pz p6" aria-hidden="true">
+      
+        <span class="ff" style="left: 4%; top: 83%; width: 5.2px; height: 5.2px; animation-duration: 9.1s, 3.1s; animation-delay: -0.9s, -0.9s;"></span>
+      
+        <span class="ff" style="left: 25.6%; top: 74.6%; width: 3.9px; height: 3.9px; animation-duration: 11.7s, 3.6s; animation-delay: -6s, -6s;"></span>
+      
+        <span class="ff" style="left: 18.2%; top: 67.5%; width: 3.4px; height: 3.4px; animation-duration: 11.5s, 2.5s; animation-delay: -0.4s, -0.4s;"></span>
+      
+        <span class="ff" style="left: 88.4%; top: 72.7%; width: 2.8px; height: 2.8px; animation-duration: 10s, 3.7s; animation-delay: -6.5s, -6.5s;"></span>
+      
+        <span class="ff" style="left: 25.2%; top: 82.3%; width: 4.1px; height: 4.1px; animation-duration: 8.9s, 2s; animation-delay: -5.1s, -5.1s;"></span>
+      
+        <span class="ff" style="left: 54.7%; top: 88%; width: 3.6px; height: 3.6px; animation-duration: 8.7s, 3.2s; animation-delay: -6.4s, -6.4s;"></span>
+      
+        <span class="ff" style="left: 19%; top: 87%; width: 5.8px; height: 5.8px; animation-duration: 12.8s, 2.3s; animation-delay: -9.1s, -9.1s;"></span>
+      
+        <span class="ff" style="left: 60.4%; top: 86.5%; width: 3.4px; height: 3.4px; animation-duration: 9.5s, 2.1s; animation-delay: -4.2s, -4.2s;"></span>
+      
+        <span class="ff" style="left: 37.4%; top: 67.8%; width: 5.4px; height: 5.4px; animation-duration: 9.7s, 2.2s; animation-delay: -3.7s, -3.7s;"></span>
+      
+        <span class="ff" style="left: 77.3%; top: 88.6%; width: 4px; height: 4px; animation-duration: 10.4s, 2.9s; animation-delay: -3s, -3s;"></span>
+      
+        <span class="ff" style="left: 52.1%; top: 78.7%; width: 4.5px; height: 4.5px; animation-duration: 11.2s, 3.7s; animation-delay: -4.7s, -4.7s;"></span>
+      
+        <span class="ff" style="left: 34.4%; top: 76.5%; width: 5.1px; height: 5.1px; animation-duration: 9.6s, 2.8s; animation-delay: -9.2s, -9.2s;"></span>
+      
+        <span class="ff" style="left: 39.5%; top: 80.2%; width: 4.8px; height: 4.8px; animation-duration: 9.3s, 3.2s; animation-delay: -2.5s, -2.5s;"></span>
+      
+        <span class="ff" style="left: 78.3%; top: 89.2%; width: 3px; height: 3px; animation-duration: 11.4s, 2s; animation-delay: -4.4s, -4.4s;"></span>
+      
+        <span class="ff" style="left: 35.4%; top: 66.7%; width: 4.9px; height: 4.9px; animation-duration: 11.4s, 3.8s; animation-delay: -4.4s, -4.4s;"></span>
+      
+        <span class="ff" style="left: 19.3%; top: 79%; width: 5.1px; height: 5.1px; animation-duration: 11s, 3.7s; animation-delay: -2.3s, -2.3s;"></span>
+      
+        <span class="ff" style="left: 9.6%; top: 68.6%; width: 3.7px; height: 3.7px; animation-duration: 7.5s, 3.2s; animation-delay: -3.4s, -3.4s;"></span>
+      
+        <span class="ff" style="left: 44.1%; top: 90.5%; width: 5.2px; height: 5.2px; animation-duration: 13s, 1.8s; animation-delay: -1.7s, -1.7s;"></span>
+      
+        <span class="ff" style="left: 65.8%; top: 77.8%; width: 5.2px; height: 5.2px; animation-duration: 12.2s, 3.3s; animation-delay: -4.5s, -4.5s;"></span>
+      
+        <span class="ff" style="left: 15.4%; top: 68.7%; width: 5.3px; height: 5.3px; animation-duration: 7.4s, 2.9s; animation-delay: -6.5s, -6.5s;"></span>
+      
+        <span class="ff" style="left: 45.9%; top: 73.9%; width: 2.6px; height: 2.6px; animation-duration: 7.5s, 2.1s; animation-delay: -5.5s, -5.5s;"></span>
+      
+        <span class="ff" style="left: 67.4%; top: 68.4%; width: 5.7px; height: 5.7px; animation-duration: 11.1s, 2.7s; animation-delay: -2.6s, -2.6s;"></span>
+      
+        <span class="ff" style="left: 73.2%; top: 75%; width: 5.8px; height: 5.8px; animation-duration: 13.6s, 2.8s; animation-delay: -7.4s, -7.4s;"></span>
+      
+        <span class="ff" style="left: 90.1%; top: 69.3%; width: 5.8px; height: 5.8px; animation-duration: 12.4s, 3.4s; animation-delay: -7.4s, -7.4s;"></span>
+      
+        <span class="ff" style="left: 88.3%; top: 63.4%; width: 5px; height: 5px; animation-duration: 12.8s, 2.3s; animation-delay: -4.4s, -4.4s;"></span>
+      
+        <span class="ff" style="left: 33.5%; top: 87.8%; width: 4.7px; height: 4.7px; animation-duration: 14s, 3s; animation-delay: -1.5s, -1.5s;"></span>
+      
+    </div>
+    <!-- Polen y mariposas sobre el prado, de día -->
+    <div class="layer on-day sy s-ff pz p6" aria-hidden="true">
+      
+        <span class="po" style="left: 4%; top: 84.1%; width: 2.8px; height: 2.8px; animation-duration: 16.1s, 16.1s; animation-delay: -6.7s, -6.7s;"></span>
+      
+        <span class="po" style="left: 18%; top: 70.3%; width: 2.6px; height: 2.6px; animation-duration: 15.4s, 15.4s; animation-delay: -8s, -8s;"></span>
+      
+        <span class="po" style="left: 66.1%; top: 63.3%; width: 2.7px; height: 2.7px; animation-duration: 14.4s, 14.4s; animation-delay: -5.2s, -5.2s;"></span>
+      
+        <span class="po" style="left: 67.4%; top: 70.1%; width: 3.5px; height: 3.5px; animation-duration: 11.1s, 11.1s; animation-delay: -3.4s, -3.4s;"></span>
+      
+        <span class="po" style="left: 67.8%; top: 62.8%; width: 1.9px; height: 1.9px; animation-duration: 16.7s, 16.7s; animation-delay: -9.8s, -9.8s;"></span>
+      
+        <span class="po" style="left: 95.2%; top: 52.8%; width: 2.7px; height: 2.7px; animation-duration: 12.3s, 12.3s; animation-delay: -9.9s, -9.9s;"></span>
+      
+        <span class="po" style="left: 39.6%; top: 78.5%; width: 2.3px; height: 2.3px; animation-duration: 14.3s, 14.3s; animation-delay: -8.3s, -8.3s;"></span>
+      
+        <span class="po" style="left: 42.5%; top: 69.9%; width: 2.9px; height: 2.9px; animation-duration: 17.1s, 17.1s; animation-delay: -2.8s, -2.8s;"></span>
+      
+        <span class="po" style="left: 29%; top: 60.1%; width: 2.2px; height: 2.2px; animation-duration: 11.1s, 11.1s; animation-delay: -4.2s, -4.2s;"></span>
+      
+        <span class="po" style="left: 10.5%; top: 56.6%; width: 2.8px; height: 2.8px; animation-duration: 12s, 12s; animation-delay: -0.6s, -0.6s;"></span>
+      
+        <span class="po" style="left: 60.3%; top: 83.7%; width: 2.8px; height: 2.8px; animation-duration: 13.6s, 13.6s; animation-delay: -1s, -1s;"></span>
+      
+        <span class="po" style="left: 80.5%; top: 53.3%; width: 2.6px; height: 2.6px; animation-duration: 17.6s, 17.6s; animation-delay: -7.4s, -7.4s;"></span>
+      
+        <span class="po" style="left: 55.9%; top: 59.5%; width: 2.5px; height: 2.5px; animation-duration: 11.8s, 11.8s; animation-delay: -3.6s, -3.6s;"></span>
+      
+        <span class="po" style="left: 6%; top: 75.4%; width: 2.5px; height: 2.5px; animation-duration: 13.8s, 13.8s; animation-delay: -1.3s, -1.3s;"></span>
+      
+        <span class="po" style="left: 19.9%; top: 57.5%; width: 2.2px; height: 2.2px; animation-duration: 15.2s, 15.2s; animation-delay: -5.3s, -5.3s;"></span>
+      
+        <span class="po" style="left: 61.4%; top: 72%; width: 2.6px; height: 2.6px; animation-duration: 13.7s, 13.7s; animation-delay: -6.8s, -6.8s;"></span>
+      
+        <span class="po" style="left: 60.1%; top: 66%; width: 1.6px; height: 1.6px; animation-duration: 16.8s, 16.8s; animation-delay: -3.5s, -3.5s;"></span>
+      
+        <span class="po" style="left: 26.4%; top: 89.8%; width: 2.1px; height: 2.1px; animation-duration: 13.1s, 13.1s; animation-delay: -2.1s, -2.1s;"></span>
+      
+        <span class="po" style="left: 78.3%; top: 66.7%; width: 1.5px; height: 1.5px; animation-duration: 11.9s, 11.9s; animation-delay: -6.8s, -6.8s;"></span>
+      
+        <span class="po" style="left: 83.6%; top: 67.5%; width: 3px; height: 3px; animation-duration: 12.8s, 12.8s; animation-delay: -7.4s, -7.4s;"></span>
+      
+        <span class="po" style="left: 12.9%; top: 66.7%; width: 1.9px; height: 1.9px; animation-duration: 16.3s, 16.3s; animation-delay: -5.6s, -5.6s;"></span>
+      
+        <span class="po" style="left: 81.2%; top: 53.1%; width: 1.7px; height: 1.7px; animation-duration: 12.9s, 12.9s; animation-delay: -6.9s, -6.9s;"></span>
+      
+        <span class="po" style="left: 10.7%; top: 77.3%; width: 3.3px; height: 3.3px; animation-duration: 17.8s, 17.8s; animation-delay: -8.8s, -8.8s;"></span>
+      
+        <span class="po" style="left: 35.4%; top: 77.4%; width: 2.6px; height: 2.6px; animation-duration: 11.1s, 11.1s; animation-delay: -9.3s, -9.3s;"></span>
+      
+      
+        <span class="bf" style="left: 8%; top: 73.9%; animation-duration: 18.6s; animation-delay: -9.8s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 82.3%; top: 82.7%; animation-duration: 15.3s; animation-delay: -3s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 13.6%; top: 74.3%; animation-duration: 18s; animation-delay: -3.2s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 65.6%; top: 80.8%; animation-duration: 14.1s; animation-delay: -1.5s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 63.4%; top: 78.1%; animation-duration: 18.7s; animation-delay: -7.5s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 33.9%; top: 71%; animation-duration: 19.6s; animation-delay: -4.6s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 83.1%; top: 66.3%; animation-duration: 19.9s; animation-delay: -2.8s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+    </div>
+    <!-- Primer plano: suelo y pinos que se abren como telón al bajar -->
+    <svg class="layer sy s-fg pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 874C300 856 600 888 900 868S1300 852 1440 864V900H0Z" style="fill: var(--fg);"></path>
+    </svg>
+    <svg class="layer sy s-fgl pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M40 545L110 689L76 689L143 815L100 815L172 905L-92 905L-20 815L-63 815L4 689L-30 689ZM112 615L168 731L141 731L195 833L160 833L219 905L5 905L64 833L29 833L83 731L56 731ZM176 505L253 665L216 665L290 805L242 805L323 905L29 905L110 805L62 805L136 665L99 665ZM236 655L284 755L261 755L307 843L277 843L328 905L144 905L195 843L165 843L211 755L188 755Z" style="fill: var(--fg);"></path>
+    </svg>
+    <svg class="layer sy s-fgr pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M1210 645L1260 749L1236 749L1284 840L1253 840L1306 905L1114 905L1167 840L1136 840L1184 749L1160 749ZM1270 555L1338 695L1305 695L1370 818L1328 818L1399 905L1141 905L1212 818L1170 818L1235 695L1202 695ZM1340 605L1398 725L1370 725L1426 830L1390 830L1450 905L1230 905L1290 830L1254 830L1310 725L1282 725ZM1410 475L1493 647L1454 647L1533 798L1481 798L1568 905L1252 905L1339 798L1287 798L1366 647L1327 647Z" style="fill: var(--fg);"></path>
+    </svg>
+    <div class="sy s-text" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 0; display: flex; flex-direction: column; gap: 18px;">
+      <span style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: var(--eyebrow);">TEMPORADA VERANO 2027 · 4 ENE AL 26 FEB</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(46px, 6.4vw, 96px); line-height: 0.95; letter-spacing: -0.02em; color: var(--heroInk); white-space: pre-line;">Ocho semanas.
+Un sendero.
+Tu hijo elige el camino.</h1>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 6px;">
+        <a href="#pase" style="background: var(--btn); color: var(--btnInk); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
+        <a href="#sendero" style="background: var(--btn2); color: var(--btn2Ink); border: 2px solid var(--btn2Line); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center; box-sizing: border-box;">Ver la temporada</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="sendero" style="position: relative; overflow: hidden;">
+    <svg class="bg-layer vd" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <path d="M323 291Q333 300 326 311Q319 321 308 328Q297 335 285 337Q272 339 260 340Q247 342 230 343Q213 344 207 332Q201 321 205 311Q209 300 208 291Q207 281 214 272Q220 263 232 256Q244 249 260 251Q275 252 283 262Q290 272 301 277Q313 281 323 291ZM392 280Q410 300 390 320Q371 340 351 352Q330 365 308 373Q285 381 258 386Q232 391 199 389Q166 387 158 363Q150 339 156 320Q161 300 154 280Q147 260 161 241Q175 221 203 212Q230 202 258 206Q287 211 304 227Q321 243 347 251Q374 259 392 280ZM464 267Q484 300 448 327Q413 355 388 375Q362 395 331 413Q300 430 258 437Q216 444 170 435Q124 427 116 390Q108 354 109 327Q111 300 94 267Q78 235 104 207Q130 179 174 170Q217 161 258 168Q299 175 327 193Q356 211 400 223Q443 235 464 267ZM532 254Q547 300 498 334Q448 367 423 397Q398 428 358 458Q318 488 259 492Q200 496 144 478Q89 459 79 414Q69 368 60 334Q51 300 25 254Q0 207 44 174Q88 140 148 135Q207 129 259 133Q310 137 354 154Q398 171 458 190Q517 208 532 254ZM592 242Q598 300 539 339Q480 379 461 423Q441 468 389 510Q337 551 261 547Q185 542 123 513Q61 485 44 434Q27 383 2 341Q-23 300 -51 239Q-79 179 -13 144Q54 109 127 106Q199 103 261 98Q324 94 386 109Q448 125 518 154Q587 183 592 242ZM641 231Q636 300 577 346Q519 392 506 455Q494 517 426 566Q357 614 266 596Q175 577 106 542Q38 506 6 454Q-25 402 -67 351Q-110 300 -131 226Q-153 153 -62 119Q30 86 110 81Q191 76 266 58Q340 39 422 57Q503 75 574 118Q646 162 641 231ZM679 223Q668 300 619 355Q570 411 562 492Q555 574 464 622Q374 671 271 636Q167 600 90 565Q13 529 -40 478Q-93 426 -147 363Q-201 300 -207 216Q-213 131 -100 101Q13 70 97 57Q181 43 271 8Q361 -28 458 -1Q555 26 623 86Q690 147 679 223ZM712 218Q705 300 673 368Q640 435 629 534Q617 632 503 673Q388 715 275 665Q163 615 72 587Q-19 559 -98 508Q-177 456 -233 378Q-288 300 -272 208Q-255 116 -129 86Q-2 57 82 27Q167 -3 275 -53Q384 -103 492 -59Q600 -16 659 60Q718 137 712 218ZM1244 629Q1245 640 1239 650Q1233 659 1222 664Q1212 669 1203 678Q1195 687 1179 691Q1163 695 1153 684Q1143 674 1137 666Q1131 657 1126 649Q1121 640 1121 630Q1121 619 1128 608Q1134 597 1150 597Q1167 597 1179 601Q1191 605 1206 603Q1221 602 1232 610Q1243 618 1244 629ZM1304 617Q1301 640 1292 658Q1282 677 1265 690Q1248 703 1229 721Q1211 740 1179 743Q1147 746 1130 724Q1113 703 1098 689Q1083 675 1068 657Q1052 640 1055 618Q1059 597 1076 578Q1093 559 1124 560Q1156 561 1179 564Q1202 567 1235 563Q1268 559 1287 577Q1307 595 1304 617ZM1355 607Q1347 640 1340 667Q1333 695 1312 719Q1290 742 1259 769Q1228 795 1181 793Q1133 791 1110 759Q1086 727 1057 711Q1029 694 1001 667Q974 640 986 607Q998 575 1028 551Q1058 527 1101 526Q1145 526 1181 524Q1216 522 1267 517Q1319 511 1341 543Q1364 574 1355 607ZM1399 599Q1387 640 1390 678Q1393 716 1366 752Q1339 788 1291 817Q1244 846 1183 837Q1122 828 1091 790Q1060 751 1012 734Q964 717 927 679Q891 640 918 598Q945 556 987 528Q1029 500 1081 494Q1133 487 1183 478Q1233 469 1301 466Q1370 464 1391 511Q1411 557 1399 599ZM1439 592Q1430 640 1447 691Q1464 741 1427 788Q1390 835 1323 862Q1257 889 1185 873Q1113 858 1071 819Q1029 781 958 762Q888 744 849 692Q809 640 857 591Q905 542 954 509Q1003 475 1061 458Q1118 440 1185 425Q1251 410 1333 415Q1416 421 1432 483Q1447 545 1439 592ZM1480 587Q1485 640 1516 706Q1548 771 1492 825Q1437 879 1352 900Q1266 920 1185 903Q1104 887 1046 853Q988 818 896 796Q805 774 772 707Q739 640 808 586Q876 532 924 490Q973 447 1037 415Q1100 382 1185 365Q1270 349 1361 368Q1453 387 1464 461Q1476 534 1480 587ZM1531 582Q1556 640 1597 722Q1637 803 1557 859Q1476 915 1375 929Q1273 942 1183 932Q1093 922 1015 894Q937 865 830 834Q722 803 704 722Q686 640 770 582Q854 524 894 468Q934 412 1007 363Q1080 314 1183 304Q1287 294 1383 328Q1479 362 1492 443Q1505 524 1531 582ZM1595 575Q1645 640 1685 737Q1724 834 1614 887Q1503 940 1391 950Q1278 960 1179 964Q1079 969 978 945Q878 920 764 875Q649 829 650 735Q652 640 740 577Q829 515 856 440Q883 365 970 303Q1057 242 1179 247Q1300 251 1399 298Q1498 345 1521 428Q1544 510 1595 575Z" fill="none" style="stroke: var(--topo);" stroke-width="2"></path>
+    </svg>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 64px; display: flex; flex-direction: column; gap: 40px;">
+      <div class="rv" style="display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">El sendero de la temporada</h2>
+        <p style="margin: 0; max-width: 28em; font-size: 20px; color: var(--muted);">Para niñas y niños de 6 a 13 años, de 9:00 a 17:00. Cada semana trae su paisaje, y cada actividad, una insignia para su pasaporte.</p>
+      </div>
+      <div style="overflow-x: auto; padding: 8px 0 6px;">
+        <div style="position: relative; min-width: 1040px;">
+          <svg aria-hidden="true" viewBox="0 0 1000 48" preserveAspectRatio="none" style="position: absolute; left: 24px; right: 24px; width: calc(100% - 48px); top: 0; height: 48px;">
+            <path d="M0 24H1000" style="stroke: var(--line);" stroke-width="4" stroke-dasharray="10 9"></path>
+            <path class="trail" d="M0 24H1000" pathLength="1" style="stroke: var(--head);" stroke-width="4" stroke-dasharray="1" stroke-dashoffset="0"></path>
+          </svg>
+          <ol style="list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px;">
+            
+              <li class="pop l0" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: 0s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--head); color: var(--bg); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">1</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bienvenida</span>
+                <span style="font-size: 15px; color: var(--quiet);">4 al 8 ene</span>
+              </li>
+            
+              <li class="pop l1" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -0.42s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">2</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bosque</span>
+                <span style="font-size: 15px; color: var(--quiet);">11 al 15 ene</span>
+              </li>
+            
+              <li class="pop l2" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -0.84s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">3</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Agua</span>
+                <span style="font-size: 15px; color: var(--quiet);">18 al 22 ene</span>
+              </li>
+            
+              <li class="pop l3" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -1.26s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">4</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Deportes</span>
+                <span style="font-size: 15px; color: var(--quiet);">25 al 29 ene</span>
+              </li>
+            
+              <li class="pop l4" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -1.68s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">5</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Arte</span>
+                <span style="font-size: 15px; color: var(--quiet);">1 al 5 feb</span>
+              </li>
+            
+              <li class="pop l5" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.1s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">6</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Cerro</span>
+                <span style="font-size: 15px; color: var(--quiet);">8 al 12 feb</span>
+              </li>
+            
+              <li class="pop l6" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.52s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">7</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Ciencia</span>
+                <span style="font-size: 15px; color: var(--quiet);">15 al 19 feb</span>
+              </li>
+            
+              <li class="pop l7" style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                  <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.94s;"></span></span>
+                  <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">8</span>
+                </span>
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Gran final</span>
+                <span style="font-size: 15px; color: var(--quiet);">22 al 26 feb</span>
+              </li>
+            
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Insignias" style="background: var(--soft); position: relative; overflow: hidden;">
+    <svg class="bg-layer vd v-hill" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 700C180 650 360 690 540 660S900 610 1080 650 1320 690 1440 660V900H0Z" style="fill: var(--soft2);"></path>
+      <path d="M60 750L89 810L75 810L103 863L85 863L115 900L5 900L35 863L17 863L45 810L31 810ZM150 710L187 786L169 786L204 853L181 853L220 900L80 900L119 853L96 853L131 786L113 786ZM220 760L247 816L234 816L260 865L243 865L272 900L168 900L197 865L180 865L206 816L193 816ZM1180 730L1213 798L1197 798L1228 858L1208 858L1243 900L1117 900L1152 858L1132 858L1163 798L1147 798ZM1250 690L1291 774L1271 774L1310 848L1285 848L1327 900L1173 900L1215 848L1190 848L1229 774L1209 774ZM1330 750L1359 810L1345 810L1373 863L1355 863L1385 900L1275 900L1305 863L1287 863L1315 810L1301 810ZM1400 720L1435 792L1418 792L1451 855L1430 855L1466 900L1334 900L1370 855L1349 855L1382 792L1365 792Z" style="fill: var(--soft3);"></path>
+      <g class="on-day"><g class="cshadow" fill="#2F5D2A" opacity="0.07"><ellipse cx="400" cy="740" rx="220" ry="30"></ellipse><ellipse cx="1100" cy="770" rx="260" ry="34"></ellipse></g></g>
+    </svg>
+    <!-- Guirnalda: banderines de día, ampolletas de noche -->
+    <svg aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="xMidYMin slice" style="position: absolute; left: 0; top: 0; width: 100%; height: 90px; pointer-events: none;">
+      <path d="M0 8Q180 68 360 8M360 8Q540 68 720 8M720 8Q900 68 1080 8M1080 8Q1260 68 1440 8" fill="none" style="stroke: var(--wood);" stroke-width="1.6"></path>
+      
+        <path class="flag" d="M21 17L37 17L29 37Z" fill="#4F8A3C" style="animation-delay: 0s;"></path>
+      
+        <path class="flag" d="M71 29L87 29L79 49Z" fill="#C8693F" style="animation-delay: -0.37s;"></path>
+      
+        <path class="flag" d="M122 36L138 36L130 56Z" fill="#5B9BC2" style="animation-delay: -0.74s;"></path>
+      
+        <path class="flag" d="M172 38L188 38L180 58Z" fill="#4F8A3C" style="animation-delay: -1.11s;"></path>
+      
+        <path class="flag" d="M222 36L238 36L230 56Z" fill="#C8693F" style="animation-delay: -1.48s;"></path>
+      
+        <path class="flag" d="M273 29L289 29L281 49Z" fill="#5B9BC2" style="animation-delay: -1.85s;"></path>
+      
+        <path class="flag" d="M323 17L339 17L331 37Z" fill="#4F8A3C" style="animation-delay: -2.22s;"></path>
+      
+        <path class="flag" d="M381 17L397 17L389 37Z" fill="#C8693F" style="animation-delay: -2.59s;"></path>
+      
+        <path class="flag" d="M431 29L447 29L439 49Z" fill="#5B9BC2" style="animation-delay: -0.16s;"></path>
+      
+        <path class="flag" d="M482 36L498 36L490 56Z" fill="#4F8A3C" style="animation-delay: -0.53s;"></path>
+      
+        <path class="flag" d="M532 38L548 38L540 58Z" fill="#C8693F" style="animation-delay: -0.9s;"></path>
+      
+        <path class="flag" d="M582 36L598 36L590 56Z" fill="#5B9BC2" style="animation-delay: -1.27s;"></path>
+      
+        <path class="flag" d="M633 29L649 29L641 49Z" fill="#4F8A3C" style="animation-delay: -1.64s;"></path>
+      
+        <path class="flag" d="M683 17L699 17L691 37Z" fill="#C8693F" style="animation-delay: -2.01s;"></path>
+      
+        <path class="flag" d="M741 17L757 17L749 37Z" fill="#5B9BC2" style="animation-delay: -2.38s;"></path>
+      
+        <path class="flag" d="M791 29L807 29L799 49Z" fill="#4F8A3C" style="animation-delay: -2.75s;"></path>
+      
+        <path class="flag" d="M842 36L858 36L850 56Z" fill="#C8693F" style="animation-delay: -0.32s;"></path>
+      
+        <path class="flag" d="M892 38L908 38L900 58Z" fill="#5B9BC2" style="animation-delay: -0.69s;"></path>
+      
+        <path class="flag" d="M942 36L958 36L950 56Z" fill="#4F8A3C" style="animation-delay: -1.06s;"></path>
+      
+        <path class="flag" d="M993 29L1009 29L1001 49Z" fill="#C8693F" style="animation-delay: -1.43s;"></path>
+      
+        <path class="flag" d="M1043 17L1059 17L1051 37Z" fill="#5B9BC2" style="animation-delay: -1.8s;"></path>
+      
+        <path class="flag" d="M1101 17L1117 17L1109 37Z" fill="#4F8A3C" style="animation-delay: -2.17s;"></path>
+      
+        <path class="flag" d="M1151 29L1167 29L1159 49Z" fill="#C8693F" style="animation-delay: -2.54s;"></path>
+      
+        <path class="flag" d="M1202 36L1218 36L1210 56Z" fill="#5B9BC2" style="animation-delay: -0.11s;"></path>
+      
+        <path class="flag" d="M1252 38L1268 38L1260 58Z" fill="#4F8A3C" style="animation-delay: -0.48s;"></path>
+      
+        <path class="flag" d="M1302 36L1318 36L1310 56Z" fill="#C8693F" style="animation-delay: -0.85s;"></path>
+      
+        <path class="flag" d="M1353 29L1369 29L1361 49Z" fill="#5B9BC2" style="animation-delay: -1.22s;"></path>
+      
+        <path class="flag" d="M1403 17L1419 17L1411 37Z" fill="#4F8A3C" style="animation-delay: -1.59s;"></path>
+      
+      <g class="on-night">
+        <path d="M46 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M96 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M147 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M197 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M248 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M298 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M406 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M456 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M507 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M557 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M608 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M658 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M766 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M816 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M867 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M917 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M968 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1018 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1126 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1176 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1227 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1277 40a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1328 36a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M1378 26a8 8 0 1 0 16 0a8 8 0 1 0 -16 0" fill="#FFD27A" opacity="0.25"></path>
+        <path class="twk" d="M51 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M152 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M253 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M411 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M512 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M613 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M771 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M872 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M973 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1131 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1232 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1333 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0" fill="#FFE9B0"></path>
+        <path class="twk" d="M102 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M203 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M303 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M462 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M563 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M663 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M822 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M923 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1023 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1182 36a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1283 40a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1383 26a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0" fill="#FFE9B0" style="animation-delay: -1.7s;"></path>
+      </g>
+    </svg>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 120px 24px 130px; display: flex; flex-direction: column; gap: 36px;">
+      <div class="rv" style="display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">Las insignias de este verano</h2>
+        <p style="margin: 0; max-width: 30em; color: var(--muted);">Cada actividad es una insignia. Tu hijo se inscribe, participa y la suma a su pasaporte de temporada.</p>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 28px 34px;">
+        
+          <li class="rv-stick" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#DCEBCD" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M36 24a12 12 0 1 1-24 0a12 12 0 1 1 24 0zM24 17l6 4-2 7h-8l-2-7z" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Fútbol</span>
+          </li>
+        
+          <li class="rv-stick d1" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#DCEBCD" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M14 32a6 6 0 1 1-.1 0zM20 26l14-14M28 12h6v6" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Quemadas</span>
+          </li>
+        
+          <li class="rv-stick d2" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#E2EDD5" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M6 36l12-18 7 10 5-6 12 14z" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Caminata</span>
+          </li>
+        
+          <li class="rv-stick d3" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#D5E8F0" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M8 20c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 28c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 36c4-4 8-4 12 0s8 4 12 0 6-3 8-2" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Piscina</span>
+          </li>
+        
+          <li class="rv-stick d4" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#E2EDD5" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M24 39V22M24 27c-7 0-10-4-10-10 6 0 10 4 10 10zM24 22c0-6 4-10 10-10 0 6-4 10-10 10" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Huerto</span>
+          </li>
+        
+          <li class="rv-stick" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M8 14l10-4 12 4 10-4v24l-10 4-12-4-10 4zM18 10v24M30 14v24" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Búsqueda del tesoro</span>
+          </li>
+        
+          <li class="rv-stick d1" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#F3DCCF" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M24 11c-8 0-13 6-13 13s5 12 11 12c2 0 3-1 3-3s-1-2-1-4 2-3 4-3h3c4 0 7-3 7-7 0-5-6-8-14-8zM18 20h.1M24 16h.1M30 19h.1" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Pintura</span>
+          </li>
+        
+          <li class="rv-stick d2" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#F3DCCF" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M13 12h22v11a11 11 0 0 1-22 0zM18 19h3M27 19h3M19 27c3 2 7 2 10 0" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Teatro</span>
+          </li>
+        
+          <li class="rv-stick d3" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M9 22h30v5a10 10 0 0 1-10 10H19A10 10 0 0 1 9 27zM17 17c0-2 1-3 1-5M24 17c0-2 1-3 1-5M31 17c0-2 1-3 1-5" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Cocina</span>
+          </li>
+        
+          <li class="rv-stick d4" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <span class="on-night halo" aria-hidden="true"></span>
+            <svg class="badge" width="112" height="112" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="position: relative;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#2F5D2A" stroke-width="1.6" stroke-dasharray="3 4"></circle><g transform="translate(26 26)"><path d="M24 9c2 5 7 7 7 13a7 7 0 0 1-14 0c0-3 2-5 3-7 1 3 3 4 4 4 0-3-1-6 0-10zM12 38l24-5M12 33l24 5" stroke="#2F5D2A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+            <span style="font-weight: 700; font-size: 16px; line-height: 1.25;">Fogata</span>
+          </li>
+        
+      </ul>
+    </div>
+  </section>
+
+  <section aria-label="Semana 1 día por día" style="position: relative; overflow: hidden;">
+    <svg class="bg-layer vd" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <path d="M1166 249Q1169 260 1163 270Q1157 280 1146 286Q1135 293 1123 295Q1112 298 1098 305Q1084 311 1069 307Q1055 302 1053 290Q1051 277 1048 269Q1045 260 1045 250Q1045 240 1051 230Q1058 221 1071 215Q1084 208 1098 215Q1112 221 1122 226Q1132 230 1148 234Q1163 238 1166 249ZM1233 236Q1234 260 1219 279Q1204 297 1187 311Q1170 325 1148 334Q1126 343 1096 354Q1067 366 1041 353Q1014 340 1012 316Q1009 292 997 276Q985 260 983 239Q981 217 998 199Q1015 181 1043 172Q1070 164 1096 175Q1123 186 1146 191Q1169 196 1201 204Q1233 213 1233 236ZM1298 223Q1289 260 1268 286Q1246 312 1227 336Q1208 361 1175 378Q1142 395 1096 407Q1051 419 1015 395Q980 372 975 339Q970 306 943 283Q917 260 914 226Q910 192 943 169Q976 145 1017 135Q1059 126 1096 138Q1134 150 1173 153Q1212 156 1259 171Q1306 187 1298 223ZM1353 211Q1333 260 1310 293Q1287 327 1271 365Q1254 403 1207 427Q1159 451 1098 458Q1037 465 994 432Q952 398 939 360Q926 322 881 291Q836 260 838 214Q840 167 892 141Q945 116 996 104Q1048 92 1098 99Q1147 107 1204 108Q1262 110 1318 136Q1374 162 1353 211ZM1399 201Q1368 260 1352 302Q1336 344 1322 399Q1308 453 1242 479Q1175 505 1100 503Q1025 502 976 462Q926 422 899 382Q871 342 809 301Q747 260 762 202Q777 145 849 119Q921 94 979 75Q1037 56 1100 55Q1164 54 1238 58Q1313 62 1372 102Q1431 142 1399 201ZM1438 193Q1401 260 1400 313Q1398 366 1382 437Q1367 508 1278 529Q1190 551 1103 540Q1017 529 957 489Q897 449 850 407Q803 366 729 313Q656 260 691 193Q727 127 814 102Q902 76 963 45Q1024 13 1103 2Q1183 -9 1272 4Q1361 17 1418 72Q1474 127 1438 193ZM1474 188Q1443 260 1459 327Q1475 394 1450 478Q1425 562 1313 574Q1200 585 1105 568Q1010 551 935 518Q859 484 791 439Q722 395 648 327Q573 260 633 187Q692 114 788 87Q883 59 945 8Q1007 -43 1105 -60Q1204 -77 1302 -48Q1401 -20 1453 48Q1506 115 1474 188ZM1516 183Q1501 260 1533 343Q1564 426 1521 518Q1477 610 1342 608Q1206 605 1105 590Q1003 575 906 553Q809 530 723 478Q637 425 572 343Q507 260 588 183Q669 106 763 71Q858 35 921 -39Q985 -112 1105 -127Q1224 -142 1326 -94Q1428 -45 1480 30Q1532 106 1516 183ZM360 709Q360 720 352 728Q345 736 342 747Q340 757 328 766Q317 774 302 769Q287 763 276 758Q265 752 257 745Q248 738 242 729Q236 720 234 708Q233 696 248 691Q263 685 276 685Q289 685 302 679Q314 674 329 677Q343 680 352 689Q360 699 360 709ZM413 700Q414 720 404 737Q395 754 390 777Q386 800 359 813Q333 827 304 813Q275 800 254 791Q232 783 210 771Q189 760 177 740Q166 720 168 697Q171 674 201 665Q231 656 254 652Q278 648 304 634Q331 620 359 630Q387 639 400 660Q413 680 413 700ZM462 692Q469 720 462 748Q454 775 444 810Q434 845 391 859Q347 873 307 852Q266 830 231 824Q196 817 158 801Q120 784 108 752Q96 720 108 688Q119 655 160 642Q202 629 233 617Q264 604 307 583Q349 561 388 581Q428 601 442 633Q456 665 462 692ZM512 686Q532 720 528 760Q523 800 502 844Q480 888 420 899Q359 911 308 885Q257 860 205 858Q152 857 98 834Q45 811 40 766Q35 720 55 680Q76 640 123 620Q171 600 209 576Q248 552 308 526Q368 501 415 535Q462 570 477 610Q492 651 512 686ZM569 679Q608 720 603 773Q597 826 559 875Q520 924 444 933Q368 941 307 917Q247 893 174 899Q100 905 35 871Q-30 838 -21 779Q-13 720 12 673Q38 627 85 595Q133 564 181 529Q230 493 307 469Q385 445 436 495Q488 546 509 592Q530 638 569 679ZM637 671Q698 720 684 786Q669 851 609 902Q549 952 463 960Q377 969 305 953Q233 937 138 948Q43 959 -27 910Q-96 861 -71 791Q-47 720 -25 666Q-3 612 41 566Q85 520 148 475Q211 430 305 415Q399 399 453 463Q507 527 541 575Q575 622 637 671ZM717 660Q798 720 763 796Q729 873 649 922Q570 971 478 985Q386 1000 301 997Q216 993 100 1004Q-16 1014 -82 947Q-147 880 -109 800Q-71 720 -63 657Q-55 594 -13 530Q28 467 110 420Q193 372 301 369Q409 366 467 438Q526 510 581 555Q636 600 717 660ZM805 646Q897 720 835 804Q772 888 678 937Q585 985 492 1014Q399 1043 297 1052Q195 1061 62 1062Q-70 1064 -126 978Q-182 892 -139 806Q-96 720 -110 644Q-124 569 -79 489Q-34 409 72 367Q178 325 297 334Q416 343 483 416Q549 488 631 530Q713 572 805 646Z" fill="none" style="stroke: var(--topo);" stroke-width="2"></path>
+    </svg>
+    <div class="on-day" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none;">
+      
+        <span class="po" style="left: 3.1%; top: 84.2%; width: 3px; height: 3px; animation-duration: 11.5s, 11.5s; animation-delay: -1.7s, -1.7s;"></span>
+      
+        <span class="po" style="left: 88%; top: 44.2%; width: 2.3px; height: 2.3px; animation-duration: 15.1s, 15.1s; animation-delay: -1.1s, -1.1s;"></span>
+      
+        <span class="po" style="left: 94.2%; top: 80.9%; width: 2.4px; height: 2.4px; animation-duration: 17.8s, 17.8s; animation-delay: -6.4s, -6.4s;"></span>
+      
+        <span class="po" style="left: 80.4%; top: 58.4%; width: 2.9px; height: 2.9px; animation-duration: 11s, 11s; animation-delay: -2.3s, -2.3s;"></span>
+      
+        <span class="po" style="left: 24.8%; top: 71.5%; width: 2.8px; height: 2.8px; animation-duration: 12.9s, 12.9s; animation-delay: -2s, -2s;"></span>
+      
+        <span class="po" style="left: 55.3%; top: 38.4%; width: 3.1px; height: 3.1px; animation-duration: 17.6s, 17.6s; animation-delay: -2.4s, -2.4s;"></span>
+      
+        <span class="po" style="left: 50.8%; top: 74.7%; width: 2px; height: 2px; animation-duration: 13.3s, 13.3s; animation-delay: -5.5s, -5.5s;"></span>
+      
+        <span class="po" style="left: 95.2%; top: 57%; width: 1.7px; height: 1.7px; animation-duration: 11.2s, 11.2s; animation-delay: -4.3s, -4.3s;"></span>
+      
+        <span class="po" style="left: 62.7%; top: 35.6%; width: 2.8px; height: 2.8px; animation-duration: 15.6s, 15.6s; animation-delay: -8.2s, -8.2s;"></span>
+      
+        <span class="po" style="left: 80%; top: 77.4%; width: 2.3px; height: 2.3px; animation-duration: 14.5s, 14.5s; animation-delay: -0.3s, -0.3s;"></span>
+      
+        <span class="po" style="left: 11.1%; top: 81.3%; width: 3.3px; height: 3.3px; animation-duration: 14.4s, 14.4s; animation-delay: 0s, 0s;"></span>
+      
+        <span class="po" style="left: 11.5%; top: 57.2%; width: 2.9px; height: 2.9px; animation-duration: 11.8s, 11.8s; animation-delay: -8.8s, -8.8s;"></span>
+      
+    </div>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px; display: flex; flex-direction: column; gap: 32px;">
+      <h2 class="rv" style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">Semana 1, día por día</h2>
+      <div style="overflow-x: auto;">
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(210px, 1fr)); min-width: 1050px;">
+          
+            <div class="rv" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 26px; color: var(--head);">Lunes</span>
+                <span style="font-size: 15px; color: var(--quiet);">4 de enero</span>
+              </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M8 14l10-4 12 4 10-4v24l-10 4-12-4-10 4zM18 10v24M30 14v24" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">9:30</span>
+                    <span style="font-weight: 700;">Juegos para conocerse</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#DCEBCD" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M36 24a12 12 0 1 1-24 0a12 12 0 1 1 24 0zM24 17l6 4-2 7h-8l-2-7z" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">11:00</span>
+                    <span style="font-weight: 700;">Fútbol mixto</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#F3DCCF" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M24 11c-8 0-13 6-13 13s5 12 11 12c2 0 3-1 3-3s-1-2-1-4 2-3 4-3h3c4 0 7-3 7-7 0-5-6-8-14-8zM18 20h.1M24 16h.1M30 19h.1" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">15:00</span>
+                    <span style="font-weight: 700;">Taller de pintura</span>
+                  </span>
+                </div>
+              
+            </div>
+          
+            <div class="rv d1" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 26px; color: var(--head);">Martes</span>
+                <span style="font-size: 15px; color: var(--quiet);">5 de enero</span>
+              </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#E2EDD5" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M6 36l12-18 7 10 5-6 12 14z" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">9:30</span>
+                    <span style="font-weight: 700;">Caminata por el cerro</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#D5E8F0" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M8 20c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 28c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 36c4-4 8-4 12 0s8 4 12 0 6-3 8-2" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">11:30</span>
+                    <span style="font-weight: 700;">Piscina</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M9 22h30v5a10 10 0 0 1-10 10H19A10 10 0 0 1 9 27zM17 17c0-2 1-3 1-5M24 17c0-2 1-3 1-5M31 17c0-2 1-3 1-5" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">15:00</span>
+                    <span style="font-weight: 700;">Cocina entretenida</span>
+                  </span>
+                </div>
+              
+            </div>
+          
+            <div class="rv d2" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 26px; color: var(--head);">Miércoles</span>
+                <span style="font-size: 15px; color: var(--quiet);">6 de enero</span>
+              </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M8 14l10-4 12 4 10-4v24l-10 4-12-4-10 4zM18 10v24M30 14v24" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">9:30</span>
+                    <span style="font-weight: 700;">Búsqueda del tesoro</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#DCEBCD" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M14 32a6 6 0 1 1-.1 0zM20 26l14-14M28 12h6v6" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">11:00</span>
+                    <span style="font-weight: 700;">Quemadas</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#F3DCCF" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M13 12h22v11a11 11 0 0 1-22 0zM18 19h3M27 19h3M19 27c3 2 7 2 10 0" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">15:00</span>
+                    <span style="font-weight: 700;">Teatro e improvisación</span>
+                  </span>
+                </div>
+              
+            </div>
+          
+            <div class="rv d3" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 26px; color: var(--head);">Jueves</span>
+                <span style="font-size: 15px; color: var(--quiet);">7 de enero</span>
+              </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#E2EDD5" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M24 39V22M24 27c-7 0-10-4-10-10 6 0 10 4 10 10zM24 22c0-6 4-10 10-10 0 6-4 10-10 10" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">9:30</span>
+                    <span style="font-weight: 700;">Huerto y semillas</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#D5E8F0" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M8 20c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 28c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 36c4-4 8-4 12 0s8 4 12 0 6-3 8-2" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">11:30</span>
+                    <span style="font-weight: 700;">Juegos de agua</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#F3DCCF" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M24 11c-8 0-13 6-13 13s5 12 11 12c2 0 3-1 3-3s-1-2-1-4 2-3 4-3h3c4 0 7-3 7-7 0-5-6-8-14-8zM18 20h.1M24 16h.1M30 19h.1" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">15:00</span>
+                    <span style="font-weight: 700;">Murales con tiza</span>
+                  </span>
+                </div>
+              
+            </div>
+          
+            <div class="rv d4" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 26px; color: var(--head);">Viernes</span>
+                <span style="font-size: 15px; color: var(--quiet);">8 de enero</span>
+              </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#DCEBCD" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M36 24a12 12 0 1 1-24 0a12 12 0 1 1 24 0zM24 17l6 4-2 7h-8l-2-7z" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">9:30</span>
+                    <span style="font-weight: 700;">Torneo relámpago</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#D5E8F0" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M8 20c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 28c4-4 8-4 12 0s8 4 12 0 6-3 8-2M8 36c4-4 8-4 12 0s8 4 12 0 6-3 8-2" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">11:00</span>
+                    <span style="font-weight: 700;">Piscina</span>
+                  </span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="54" height="54" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="flex: none;"><circle cx="50" cy="50" r="46" fill="#EDE3D3" stroke="#2F5D2A" stroke-width="5"></circle><g transform="translate(26 26)"><path d="M24 9c2 5 7 7 7 13a7 7 0 0 1-14 0c0-3 2-5 3-7 1 3 3 4 4 4 0-3-1-6 0-10zM12 38l24-5M12 33l24 5" stroke="#2F5D2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+                  <span style="display: flex; flex-direction: column; line-height: 1.25;">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--quiet);">15:00</span>
+                    <span style="font-weight: 700;">Ronda de cierre</span>
+                  </span>
+                </div>
+              
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Para niños y apoderados" style="background: var(--soft); position: relative; overflow: hidden;">
+    <svg class="bg-layer vd v-hill" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 760C200 700 380 740 560 712S960 660 1140 702 1360 730 1440 708V900H0Z" style="fill: var(--soft2);"></path>
+      <path d="M0 820C260 780 520 812 760 790S1180 770 1440 796V900H0Z" style="fill: var(--soft3);"></path>
+      <g class="on-day"><g class="cshadow" fill="#2F5D2A" opacity="0.07" style="animation-delay: -30s;"><ellipse cx="500" cy="800" rx="240" ry="30"></ellipse><ellipse cx="1150" cy="830" rx="200" ry="26"></ellipse></g></g>
+    </svg>
+    <div class="on-night" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none;">
+      
+        <span class="ff" style="left: 3%; top: 63.7%; width: 5.5px; height: 5.5px; animation-duration: 12.6s, 1.9s; animation-delay: -7.2s, -7.2s;"></span>
+      
+        <span class="ff" style="left: 78.2%; top: 75%; width: 4.4px; height: 4.4px; animation-duration: 13.2s, 2.8s; animation-delay: -8.3s, -8.3s;"></span>
+      
+        <span class="ff" style="left: 14.9%; top: 76.7%; width: 5.7px; height: 5.7px; animation-duration: 7s, 2.6s; animation-delay: -1.3s, -1.3s;"></span>
+      
+        <span class="ff" style="left: 51.7%; top: 60%; width: 2.8px; height: 2.8px; animation-duration: 11.7s, 1.8s; animation-delay: -8.2s, -8.2s;"></span>
+      
+        <span class="ff" style="left: 39.2%; top: 90.4%; width: 4.5px; height: 4.5px; animation-duration: 7.8s, 1.9s; animation-delay: -9.2s, -9.2s;"></span>
+      
+        <span class="ff" style="left: 47.7%; top: 90.4%; width: 4.1px; height: 4.1px; animation-duration: 12.6s, 2.8s; animation-delay: -5.8s, -5.8s;"></span>
+      
+        <span class="ff" style="left: 74%; top: 86.8%; width: 5.5px; height: 5.5px; animation-duration: 8.5s, 2.2s; animation-delay: -7s, -7s;"></span>
+      
+        <span class="ff" style="left: 29.8%; top: 84.9%; width: 2.8px; height: 2.8px; animation-duration: 8.6s, 3.3s; animation-delay: -0.4s, -0.4s;"></span>
+      
+        <span class="ff" style="left: 62.8%; top: 70.5%; width: 2.6px; height: 2.6px; animation-duration: 7.9s, 1.9s; animation-delay: -6.7s, -6.7s;"></span>
+      
+        <span class="ff" style="left: 13.1%; top: 85.7%; width: 3.4px; height: 3.4px; animation-duration: 8.8s, 2.7s; animation-delay: -0.3s, -0.3s;"></span>
+      
+    </div>
+    <div class="on-day" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none;">
+      
+        <span class="bf" style="left: 5%; top: 72.8%; animation-duration: 13.4s; animation-delay: -9.2s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 67.1%; top: 51.6%; animation-duration: 14s; animation-delay: -6.5s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 7.2%; top: 51.2%; animation-duration: 14.8s; animation-delay: -4.5s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 54.7%; top: 78.3%; animation-duration: 16.6s; animation-delay: -9s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+        <span class="bf" style="left: 78.9%; top: 52.7%; animation-duration: 17.1s; animation-delay: -3.7s;">
+          <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        </span>
+      
+    </div>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 130px; display: flex; flex-wrap: wrap; gap: 40px 0;">
+      <div class="rv" style="flex: 1 1 420px; padding-right: 48px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--head);">Para ellos</h2>
+        <p style="margin: 0; font-size: 22px; line-height: 1.5;">Eligen sus actividades. Arman equipos para los torneos. Votan las ideas del verano, y nadie ve su voto. Juntan insignias en su pasaporte.</p>
+      </div>
+      <div class="rv d2" style="flex: 1 1 420px; border-left: 3px dashed var(--dash); padding-left: 48px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--head);">Para ti</h2>
+        <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+          <li>Pagas la temporada en línea.</li>
+          <li>Ves el itinerario y lo que tu hijo eligió.</li>
+          <li>Registras alergias, contactos de emergencia y quién puede retirarlo.</li>
+          <li>Te avisamos si se libera un cupo o cambia un horario.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pase" aria-label="Pase de temporada" style="position: relative; overflow: hidden; background: #FBEAD0;">
+    <svg class="bg-layer vd" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <rect x="0" y="0" width="1440" height="420" fill="#FBEAD0"></rect>
+      <rect x="0" y="420" width="1440" height="160" fill="#F6D6B0"></rect>
+      <rect x="0" y="580" width="1440" height="320" fill="#E9C2A6"></rect>
+      <g class="on-night">
+        <rect x="0" y="0" width="1440" height="420" fill="#0A1724"></rect>
+        <rect x="0" y="420" width="1440" height="160" fill="#10212F"></rect>
+        <rect x="0" y="580" width="1440" height="320" fill="#162B36"></rect>
+        <path class="twk" d="M58 30a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M257 143a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M454 256a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M651 369a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M848 102a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1043 215a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1242 328a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M-1 61a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M196 174a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M393 287a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M588 400a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M787 133a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M984 246a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1181 359a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1378 92a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M133 205a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M332 318a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M529 51a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M726 164a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M923 277a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1118 390a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1317 123a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M74 236a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M271 349a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M468 82a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M663 195a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M862 308a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1059 41a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1256 154a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M13 267a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M208 380a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M407 113a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M604 226a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M801 339a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M998 72a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1193 185a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1392 298a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M149 31a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M346 144a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M543 257a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0" fill="#FFF7E6"></path>
+        <circle cx="240" cy="560" r="44" fill="#F4EFDF"></circle>
+        <circle cx="262" cy="544" r="40" fill="#10212F"></circle>
+      </g>
+    </svg>
+    <!-- El sol baja mientras se recorre el pase -->
+    <svg class="bg-layer vd v-sun on-day" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <circle cx="240" cy="600" r="150" fill="none" stroke="#FCE3BD" stroke-width="14" opacity="0.7"></circle>
+      <circle cx="240" cy="600" r="90" fill="#FCE3BD"></circle>
+    </svg>
+    <svg class="bg-layer vd" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 830C220 790 420 820 640 800S1100 780 1440 806V900H0ZM980 770L994 798L987 798L1000 823L992 823L1006 840L954 840L968 823L960 823L973 798L966 798ZM1040 744L1059 782L1050 782L1067 816L1056 816L1075 840L1005 840L1024 816L1013 816L1030 782L1021 782ZM1100 760L1115 792L1108 792L1123 820L1113 820L1129 840L1071 840L1087 820L1077 820L1092 792L1085 792ZM1160 730L1181 774L1171 774L1191 813L1178 813L1200 840L1120 840L1142 813L1129 813L1149 774L1139 774ZM1220 752L1237 787L1229 787L1245 818L1235 818L1252 840L1188 840L1205 818L1195 818L1211 787L1203 787ZM1290 720L1313 768L1302 768L1324 810L1310 810L1334 840L1246 840L1270 810L1256 810L1278 768L1267 768ZM1360 748L1378 785L1369 785L1386 817L1375 817L1394 840L1326 840L1345 817L1334 817L1351 785L1342 785ZM1420 736L1440 778L1431 778L1450 814L1437 814L1458 840L1382 840L1403 814L1390 814L1409 778L1400 778Z" style="fill: var(--mNear);"></path>
+    </svg>
+    <!-- De día: la bandada vuelve a casa -->
+    <svg class="birds on-day" aria-hidden="true" viewBox="0 0 300 80" style="position: absolute; left: 0; top: 70px; width: 240px; height: 64px; pointer-events: none; animation-duration: 72s; animation-delay: -10s;">
+      <path d="M150 14q6-8 12 0q6-8 12 0M118 30q6-8 12 0q6-8 12 0M182 30q6-8 12 0q6-8 12 0M86 46q6-8 12 0q6-8 12 0M214 46q6-8 12 0q6-8 12 0M54 62q6-8 12 0q6-8 12 0" fill="none" stroke="#6B4A22" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <!-- De noche: estrella fugaz y la luz de un farol detrás del pase -->
+    <div class="on-night" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none;">
+      <div class="shoot" style="left: 42%; top: 70px; animation-duration: 13s; animation-delay: -4s;"></div>
+      <div class="glow" style="position: absolute; left: 50%; top: 50%; width: 1100px; height: 640px; margin: -320px 0 0 -550px; background: radial-gradient(closest-side, rgba(242,181,58,0.2), rgba(242,181,58,0));"></div>
+    </div>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 96px 24px 150px; display: flex; justify-content: center;">
+      <div class="rv-ticket" style="width: 100%; max-width: 900px; display: flex; flex-wrap: wrap; border: 4px solid #2F5D2A; border-radius: 22px; overflow: hidden; background: #FFFFFF; color: #23301F;">
+        <div style="flex: 999 1 420px; padding: 36px 40px; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: #56624F;">PASE DE TEMPORADA · VERANO 2027</span>
+          <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 50px; line-height: 1.05; color: #2F5D2A;">[Precio de la temporada]</span>
+          <span style="color: #3D4A38;">Todas las actividades del itinerario y la app para apoderados. Las excursiones se pagan aparte.</span>
+        </div>
+        <div style="flex: 1 1 240px; border-left: 4px dashed #2F5D2A; background: #EEF5E6; padding: 36px 32px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+          <span style="font-size: 15px; color: #3D4A38;">Cupos de temporada: 90</span>
+          <a href="#" style="background: #2F5D2A; color: #FFFFFF; text-decoration: none; font-weight: 700; min-height: 52px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 22px;">Inscribir a mi hijo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="preguntas" style="border-top: 3px dashed var(--dash);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 72px 24px; display: flex; flex-direction: column;">
+      <h2 class="rv" style="margin: 0 0 18px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">Preguntas de apoderados</h2>
+      
+        <div class="rv" style="display: flex; flex-wrap: wrap; gap: 6px 48px; padding: 20px 0; border-top: 1px solid var(--line);">
+          <h3 style="margin: 0; flex: 1 1 320px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px; color: var(--head); line-height: 1.25;">¿Mi hijo necesita su propio celular?</h3>
+          <p style="margin: 0; flex: 2 1 420px;">No. Usa el modo niño desde tu celular, protegido con un PIN. Puede votar y apuntarse, pero no pagar ni cambiar datos.</p>
+        </div>
+      
+        <div class="rv d1" style="display: flex; flex-wrap: wrap; gap: 6px 48px; padding: 20px 0; border-top: 1px solid var(--line);">
+          <h3 style="margin: 0; flex: 1 1 320px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px; color: var(--head); line-height: 1.25;">¿Qué pasa si una actividad se llena?</h3>
+          <p style="margin: 0; flex: 2 1 420px;">Queda en lista de espera y entra solo si alguien libera su cupo. Te avisamos al momento.</p>
+        </div>
+      
+        <div class="rv d2" style="display: flex; flex-wrap: wrap; gap: 6px 48px; padding: 20px 0; border-top: 1px solid var(--line);">
+          <h3 style="margin: 0; flex: 1 1 320px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px; color: var(--head); line-height: 1.25;">¿Quién puede retirar a mi hijo?</h3>
+          <p style="margin: 0; flex: 2 1 420px;">Solo los adultos que autorices en su ficha. El equipo lo revisa en cada salida.</p>
+        </div>
+      
+    </div>
+  </section>
+
+  <section aria-label="Cierre" style="position: relative; overflow: hidden; background: #13221C; color: #FFFFFF;">
+    <!-- Cielo nocturno en capas: cada una baja a distinta velocidad -->
+    <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <rect x="0" y="0" width="1440" height="330" fill="#08121C"></rect>
+      <rect x="0" y="330" width="1440" height="240" fill="#0D1A22"></rect>
+      <rect x="0" y="570" width="1440" height="330" fill="#13221C"></rect>
+    </svg>
+    <div class="bgx vd v-far" aria-hidden="true">
+      <div class="star" style="top: 0; width: 1px; height: 1px; box-shadow: -1199px 424px rgba(255,250,235,0.5),355px 705px rgba(255,250,235,0.5),784px 683px rgba(255,250,235,0.5),-384px 249px rgba(255,250,235,0.5),-648px 454px rgba(255,250,235,0.5),-651px 1098px rgba(255,250,235,0.5),1196px 568px rgba(255,250,235,0.5),710px 761px rgba(255,250,235,0.5),364px 683px rgba(255,250,235,0.5),-666px 932px rgba(255,250,235,0.5),340px 951px rgba(255,250,235,0.5),762px 76px rgba(255,250,235,0.5),-1013px 515px rgba(255,250,235,0.5),71px 535px rgba(255,250,235,0.5),86px 981px rgba(255,250,235,0.5),319px 145px rgba(255,250,235,0.5),322px 462px rgba(255,250,235,0.5),-572px 381px rgba(255,250,235,0.5),1002px 881px rgba(255,250,235,0.5),-327px 1174px rgba(255,250,235,0.5),95px 951px rgba(255,250,235,0.5),-459px 610px rgba(255,250,235,0.5),-581px 201px rgba(255,250,235,0.5),831px 1018px rgba(255,250,235,0.5),-330px 1232px rgba(255,250,235,0.5),-189px 1149px rgba(255,250,235,0.5),917px 648px rgba(255,250,235,0.5),19px 1028px rgba(255,250,235,0.5),103px 917px rgba(255,250,235,0.5),129px 375px rgba(255,250,235,0.5),-647px 1026px rgba(255,250,235,0.5),376px 814px rgba(255,250,235,0.5),-1076px 90px rgba(255,250,235,0.5),951px 553px rgba(255,250,235,0.5),-501px 295px rgba(255,250,235,0.5),120px 343px rgba(255,250,235,0.5),415px 1101px rgba(255,250,235,0.5),269px 1220px rgba(255,250,235,0.5),743px 695px rgba(255,250,235,0.5),-1038px 856px rgba(255,250,235,0.5),660px 1126px rgba(255,250,235,0.5),-896px 1100px rgba(255,250,235,0.5),349px 872px rgba(255,250,235,0.5),-547px 630px rgba(255,250,235,0.5),1108px 111px rgba(255,250,235,0.5),136px 936px rgba(255,250,235,0.5),1013px 553px rgba(255,250,235,0.5),1126px 81px rgba(255,250,235,0.5),-581px 934px rgba(255,250,235,0.5),-908px 616px rgba(255,250,235,0.5),-843px 278px rgba(255,250,235,0.5),-259px 827px rgba(255,250,235,0.5),994px 734px rgba(255,250,235,0.5),1130px 434px rgba(255,250,235,0.5),1070px 490px rgba(255,250,235,0.5),793px 161px rgba(255,250,235,0.5),-299px 303px rgba(255,250,235,0.5),-326px 981px rgba(255,250,235,0.5),-376px 132px rgba(255,250,235,0.5),587px 325px rgba(255,250,235,0.5),-95px 620px rgba(255,250,235,0.5),-689px 519px rgba(255,250,235,0.5),980px 496px rgba(255,250,235,0.5),218px 42px rgba(255,250,235,0.5),825px 682px rgba(255,250,235,0.5),1143px 370px rgba(255,250,235,0.5),417px 469px rgba(255,250,235,0.5),-257px 661px rgba(255,250,235,0.5),-44px 594px rgba(255,250,235,0.5),457px 45px rgba(255,250,235,0.5),955px 1043px rgba(255,250,235,0.5),-33px 648px rgba(255,250,235,0.5),755px 28px rgba(255,250,235,0.5),-1034px 135px rgba(255,250,235,0.5),962px 856px rgba(255,250,235,0.5),1071px 297px rgba(255,250,235,0.5),1076px 228px rgba(255,250,235,0.5),400px 848px rgba(255,250,235,0.5),1192px 299px rgba(255,250,235,0.5),-874px 23px rgba(255,250,235,0.5),232px 1033px rgba(255,250,235,0.5),339px 538px rgba(255,250,235,0.5),-1165px 24px rgba(255,250,235,0.5),-525px 104px rgba(255,250,235,0.5),-548px 165px rgba(255,250,235,0.5),-445px 1101px rgba(255,250,235,0.5),106px 645px rgba(255,250,235,0.5),-1091px 1174px rgba(255,250,235,0.5),1121px 741px rgba(255,250,235,0.5),249px 409px rgba(255,250,235,0.5),759px 142px rgba(255,250,235,0.5),-156px 186px rgba(255,250,235,0.5),-560px 353px rgba(255,250,235,0.5),-597px 667px rgba(255,250,235,0.5),621px 151px rgba(255,250,235,0.5),-97px 1154px rgba(255,250,235,0.5),307px 59px rgba(255,250,235,0.5),396px 1024px rgba(255,250,235,0.5),113px 1156px rgba(255,250,235,0.5),-738px 692px rgba(255,250,235,0.5),1002px 1071px rgba(255,250,235,0.5),-990px 954px rgba(255,250,235,0.5),-144px 677px rgba(255,250,235,0.5),-823px 656px rgba(255,250,235,0.5),-375px 495px rgba(255,250,235,0.5),1073px 295px rgba(255,250,235,0.5),-617px 1015px rgba(255,250,235,0.5),523px 1013px rgba(255,250,235,0.5),843px 205px rgba(255,250,235,0.5),388px 444px rgba(255,250,235,0.5),980px 343px rgba(255,250,235,0.5),950px 786px rgba(255,250,235,0.5),367px 894px rgba(255,250,235,0.5),-227px 532px rgba(255,250,235,0.5),-796px 101px rgba(255,250,235,0.5),-54px 239px rgba(255,250,235,0.5),289px 1104px rgba(255,250,235,0.5),1139px 306px rgba(255,250,235,0.5),-473px 835px rgba(255,250,235,0.5),-199px 676px rgba(255,250,235,0.5),208px 276px rgba(255,250,235,0.5),-733px 340px rgba(255,250,235,0.5),1023px 22px rgba(255,250,235,0.5),1049px 1132px rgba(255,250,235,0.5),635px 951px rgba(255,250,235,0.5),-1099px 78px rgba(255,250,235,0.5),979px 801px rgba(255,250,235,0.5),388px 823px rgba(255,250,235,0.5),-103px 400px rgba(255,250,235,0.5),177px 482px rgba(255,250,235,0.5),-400px 1048px rgba(255,250,235,0.5),511px 1004px rgba(255,250,235,0.5),-614px 875px rgba(255,250,235,0.5),-760px 202px rgba(255,250,235,0.5),613px 758px rgba(255,250,235,0.5),248px 345px rgba(255,250,235,0.5),431px 143px rgba(255,250,235,0.5),-854px 208px rgba(255,250,235,0.5),-822px 818px rgba(255,250,235,0.5),1187px 41px rgba(255,250,235,0.5),652px 1004px rgba(255,250,235,0.5),287px 1012px rgba(255,250,235,0.5),-413px 251px rgba(255,250,235,0.5),452px 335px rgba(255,250,235,0.5),412px 698px rgba(255,250,235,0.5),752px 249px rgba(255,250,235,0.5),-856px 324px rgba(255,250,235,0.5),205px 270px rgba(255,250,235,0.5),188px 81px rgba(255,250,235,0.5),-200px 536px rgba(255,250,235,0.5),-160px 573px rgba(255,250,235,0.5),86px 1217px rgba(255,250,235,0.5),-1183px 592px rgba(255,250,235,0.5),-918px 792px rgba(255,250,235,0.5),452px 423px rgba(255,250,235,0.5),-858px 443px rgba(255,250,235,0.5),-414px 934px rgba(255,250,235,0.5),-225px 1140px rgba(255,250,235,0.5),-825px 600px rgba(255,250,235,0.5),-101px 95px rgba(255,250,235,0.5),580px 669px rgba(255,250,235,0.5),-75px 546px rgba(255,250,235,0.5),261px 659px rgba(255,250,235,0.5),-1050px 946px rgba(255,250,235,0.5),681px 738px rgba(255,250,235,0.5),-293px 358px rgba(255,250,235,0.5),970px 909px rgba(255,250,235,0.5),693px 670px rgba(255,250,235,0.5),792px 696px rgba(255,250,235,0.5),-596px 36px rgba(255,250,235,0.5),472px 16px rgba(255,250,235,0.5),-25px 914px rgba(255,250,235,0.5),-781px 97px rgba(255,250,235,0.5),503px 939px rgba(255,250,235,0.5),794px 864px rgba(255,250,235,0.5),522px 1195px rgba(255,250,235,0.5),72px 1px rgba(255,250,235,0.5),-1100px 847px rgba(255,250,235,0.5),185px 514px rgba(255,250,235,0.5),-93px 149px rgba(255,250,235,0.5),902px 77px rgba(255,250,235,0.5),-75px 814px rgba(255,250,235,0.5),662px 209px rgba(255,250,235,0.5),1031px 1095px rgba(255,250,235,0.5),43px 1153px rgba(255,250,235,0.5),-538px 448px rgba(255,250,235,0.5),-1166px 710px rgba(255,250,235,0.5),-208px 242px rgba(255,250,235,0.5),-586px 2px rgba(255,250,235,0.5),-355px 464px rgba(255,250,235,0.5),-243px 492px rgba(255,250,235,0.5),829px 655px rgba(255,250,235,0.5),-831px 378px rgba(255,250,235,0.5),-734px 843px rgba(255,250,235,0.5),189px 168px rgba(255,250,235,0.5),222px 18px rgba(255,250,235,0.5),1167px 563px rgba(255,250,235,0.5),48px 1015px rgba(255,250,235,0.5),591px 782px rgba(255,250,235,0.5),410px 405px rgba(255,250,235,0.5),-265px 634px rgba(255,250,235,0.5),703px 452px rgba(255,250,235,0.5),-612px 1126px rgba(255,250,235,0.5),1035px 507px rgba(255,250,235,0.5),512px 27px rgba(255,250,235,0.5),393px 462px rgba(255,250,235,0.5),1172px 109px rgba(255,250,235,0.5),405px 1156px rgba(255,250,235,0.5),-1164px 474px rgba(255,250,235,0.5),-271px 111px rgba(255,250,235,0.5),223px 1155px rgba(255,250,235,0.5),-100px 1149px rgba(255,250,235,0.5),482px 840px rgba(255,250,235,0.5),-475px 239px rgba(255,250,235,0.5),-263px 28px rgba(255,250,235,0.5),-330px 642px rgba(255,250,235,0.5),-1006px 86px rgba(255,250,235,0.5),24px 147px rgba(255,250,235,0.5),695px 105px rgba(255,250,235,0.5),735px 957px rgba(255,250,235,0.5);"></div>
+      <div class="star twk" style="top: 0; width: 2px; height: 2px; box-shadow: -1198px 884px #FFF7E6,-603px 1025px #FFF7E6,-201px 609px #FFF7E6,-751px 524px #FFF7E6,-102px 235px #FFF7E6,-884px 285px #FFF7E6,1094px 96px #FFF7E6,619px 179px #FFF7E6,558px 856px #FFF7E6,-902px 1186px #FFF7E6,-825px 153px #FFF7E6,-195px 1011px #FFF7E6,-459px 1121px #FFF7E6,-756px 248px #FFF7E6,-1143px 507px #FFF7E6,-1155px 1045px #FFF7E6,-340px 280px #FFF7E6,27px 266px #FFF7E6,-468px 401px #FFF7E6,-714px 644px #FFF7E6,1168px 559px #FFF7E6,-440px 61px #FFF7E6,1164px 586px #FFF7E6,-683px 924px #FFF7E6,-549px 1051px #FFF7E6,-677px 648px #FFF7E6,-811px 583px #FFF7E6,1139px 1024px #FFF7E6,-480px 1114px #FFF7E6,1007px 488px #FFF7E6,34px 1128px #FFF7E6,1080px 492px #FFF7E6,747px 1205px #FFF7E6,448px 94px #FFF7E6,-358px 705px #FFF7E6,151px 236px #FFF7E6,385px 412px #FFF7E6,-846px 420px #FFF7E6,593px 572px #FFF7E6,659px 685px #FFF7E6,422px 197px #FFF7E6,-211px 341px #FFF7E6,-542px 37px #FFF7E6,58px 702px #FFF7E6,1084px 104px #FFF7E6,610px 328px #FFF7E6,-623px 852px #FFF7E6,262px 365px #FFF7E6,420px 1118px #FFF7E6,1126px 1213px #FFF7E6,768px 806px #FFF7E6,149px 1089px #FFF7E6,435px 1097px #FFF7E6,-206px 1177px #FFF7E6,158px 456px #FFF7E6,-1135px 748px #FFF7E6,-341px 345px #FFF7E6,268px 1177px #FFF7E6,-674px 1169px #FFF7E6,262px 760px #FFF7E6,-964px 548px #FFF7E6,-559px 1090px #FFF7E6,-259px 217px #FFF7E6,-65px 440px #FFF7E6,-961px 326px #FFF7E6,1061px 42px #FFF7E6,-288px 800px #FFF7E6,-390px 634px #FFF7E6,-55px 163px #FFF7E6,-577px 320px #FFF7E6,47px 39px #FFF7E6,-7px 232px #FFF7E6,34px 475px #FFF7E6,293px 345px #FFF7E6,-146px 597px #FFF7E6,-483px 672px #FFF7E6,-680px 973px #FFF7E6,-208px 6px #FFF7E6,-534px 1202px #FFF7E6,-419px 592px #FFF7E6,-1061px 503px #FFF7E6,358px 112px #FFF7E6,61px 311px #FFF7E6,1100px 800px #FFF7E6,-417px 647px #FFF7E6,422px 1028px #FFF7E6,-712px 545px #FFF7E6,-421px 644px #FFF7E6,53px 31px #FFF7E6,482px 653px #FFF7E6; animation-delay: -1.2s;"></div>
+    </div>
+    <div class="bgx vd v-mid" aria-hidden="true">
+      <div class="star twk" style="top: 0; width: 3px; height: 3px; box-shadow: -1198px 873px #FFFFFF,-495px 562px #FFFFFF,428px 275px #FFFFFF,152px 977px #FFFFFF,940px 765px #FFFFFF,-721px 441px #FFFFFF,249px 407px #FFFFFF,-754px 438px #FFFFFF,-956px 859px #FFFFFF,-741px 556px #FFFFFF,-9px 709px #FFFFFF,-886px 290px #FFFFFF,-1012px 129px #FFFFFF,1009px 495px #FFFFFF,-355px 18px #FFFFFF,-477px 1073px #FFFFFF,-101px 695px #FFFFFF,-240px 965px #FFFFFF,-322px 428px #FFFFFF,-886px 504px #FFFFFF,1111px 353px #FFFFFF,-965px 87px #FFFFFF,-726px 58px #FFFFFF,-555px 939px #FFFFFF,-113px 382px #FFFFFF,-360px 391px #FFFFFF,-1046px 766px #FFFFFF,837px 174px #FFFFFF,-739px 84px #FFFFFF,-736px 1006px #FFFFFF,603px 1080px #FFFFFF,-1007px 1088px #FFFFFF,490px 1053px #FFFFFF,758px 921px #FFFFFF;"></div>
+      <div class="shoot" style="left: 8%; top: 380px; animation-duration: 10s; animation-delay: -3s;"></div>
+    </div>
+    <svg class="bgx vd v-moon" aria-hidden="true" viewBox="0 0 1440 1420" preserveAspectRatio="xMidYMin slice">
+      <circle cx="1150" cy="420" r="120" fill="#F4EFDF" opacity="0.05"></circle>
+      <circle cx="1150" cy="420" r="80" fill="#F4EFDF" opacity="0.08"></circle>
+      <circle cx="1150" cy="420" r="54" fill="#FFF4DE"></circle>
+      <circle cx="1176" cy="402" r="50" fill="#08121C"></circle>
+    </svg>
+    <svg class="vd v-mid" role="img" aria-label="Constelación con forma de carpa" viewBox="0 0 360 240" style="position: absolute; left: 3%; top: 60px; width: 360px; height: 240px; pointer-events: none;">
+      <path class="const" d="M40 200L150 90L260 200M150 90V30L198 48L150 66" pathLength="1" fill="none" stroke="#CFE5BF" stroke-width="1.6" stroke-dasharray="1" stroke-dashoffset="0" opacity="0.7"></path>
+      <path d="M36.5 200a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M146 90a4 4 0 1 0 8 0a4 4 0 1 0-8 0M256.5 200a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M147 30a3 3 0 1 0 6 0a3 3 0 1 0-6 0M195 48a3 3 0 1 0 6 0a3 3 0 1 0-6 0M147 66a3 3 0 1 0 6 0a3 3 0 1 0-6 0" fill="#FFF7E6"></path>
+      <text x="150" y="232" text-anchor="middle" font-family="Figtree, system-ui, sans-serif" font-size="13" font-weight="700" fill="#A3B49A" letter-spacing="1.5">LA CARPA</text>
+    </svg>
+    <svg class="vd v-hill" aria-hidden="true" viewBox="0 0 1440 420" preserveAspectRatio="xMidYMax slice" style="position: absolute; left: 0; bottom: 0; width: 100%; height: 420px; pointer-events: none;">
+      <path d="M0 250L150 180L280 230L420 150L560 228L700 170L840 236L990 160L1130 226L1280 176L1440 220V420H0Z" fill="#14262A"></path>
+    </svg>
+    <!-- Fogata grande con carpas encendidas -->
+    <svg aria-hidden="true" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax slice" style="position: absolute; left: 0; bottom: 0; width: 100%; height: 320px; pointer-events: none;">
+      <defs>
+        <radialGradient id="lm-fire"><stop offset="0" stop-color="#FFB547" stop-opacity="0.55"></stop><stop offset="1" stop-color="#FFB547" stop-opacity="0"></stop></radialGradient>
+      </defs>
+      <circle class="glow" cx="720" cy="290" r="230" fill="url(#lm-fire)"></circle>
+      <path d="M0 282C240 262 480 280 720 270S1200 258 1440 274V320H0ZM30 152L59 212L45 212L73 265L55 265L85 302L-25 302L5 265L-13 265L15 212L1 212ZM90 112L127 188L109 188L144 255L121 255L160 302L20 302L59 255L36 255L71 188L53 188ZM150 172L175 224L163 224L187 270L172 270L198 302L102 302L128 270L113 270L137 224L125 224ZM210 132L243 200L227 200L258 260L238 260L273 302L147 302L182 260L162 260L193 200L177 200ZM280 182L303 230L292 230L314 272L300 272L324 302L236 302L260 272L246 272L268 230L257 230ZM1160 162L1187 218L1174 218L1200 267L1183 267L1212 302L1108 302L1137 267L1120 267L1146 218L1133 218ZM1220 102L1259 182L1240 182L1277 252L1253 252L1294 302L1146 302L1187 252L1163 252L1200 182L1181 182ZM1290 142L1321 206L1306 206L1336 262L1316 262L1349 302L1231 302L1264 262L1244 262L1274 206L1259 206ZM1350 92L1391 176L1371 176L1410 250L1385 250L1427 302L1273 302L1315 250L1290 250L1329 176L1309 176ZM1410 122L1445 194L1428 194L1461 257L1440 257L1476 302L1344 302L1380 257L1359 257L1392 194L1375 194Z" fill="#0C1712"></path>
+      <ellipse cx="560" cy="290" rx="90" ry="50" fill="url(#lm-fire)"></ellipse>
+      <ellipse cx="890" cy="294" rx="90" ry="50" fill="url(#lm-fire)"></ellipse>
+      <path d="M500 304L560 222L620 304Z" fill="#5E2F1C"></path>
+      <path d="M560 304V254L584 304Z" fill="#FFCF73"></path>
+      <path d="M826 306L890 218L954 306Z" fill="#5E2F1C"></path>
+      <path d="M890 306V252L916 306Z" fill="#FFCF73"></path>
+      <path d="M680 306L760 296M680 296L760 306" stroke="#3A2618" stroke-width="10" stroke-linecap="round"></path>
+      <path class="flame" d="M720 300c-28 0-42-19-37-42 6-18 20-25 22-47 12 14 13 25 19 29 4-14 2-25-3-39 25 14 42 39 38 65-3 21-17 34-39 34z" fill="#F2B53A"></path>
+      <path class="flame" d="M720 300c-17 0-25-12-21-26 3-11 12-15 14-29 8 8 8 15 12 18 3-8 1-15-1-24 15 8 25 24 22 40-2 13-10 21-26 21z" fill="#F08A3C" style="animation-duration: 1.2s; animation-delay: -0.5s;"></path>
+      <path class="flame" d="M720 300c-8 0-12-6-11-13 1-6 6-8 7-14 4 4 5 8 6 9 2-4 1-8 0-12 8 4 12 12 11 20-1 6-5 10-13 10z" fill="#FFF1C2" style="animation-duration: 0.9s; animation-delay: -0.3s;"></path>
+      <g fill="#FFD27A">
+        <circle class="spark-l" cx="716" cy="250" r="2.4"></circle>
+        <circle class="spark-r" cx="724" cy="254" r="2"></circle>
+        <circle class="spark-l" cx="712" cy="258" r="1.8" style="animation-delay: -1.1s;"></circle>
+        <circle class="spark-r" cx="728" cy="248" r="2.6" style="animation-delay: -1.9s;"></circle>
+        <circle class="spark-l" cx="720" cy="246" r="1.8" style="animation-delay: -2.6s;"></circle>
+        <circle class="spark-r" cx="716" cy="252" r="1.6" style="animation-delay: -3.2s;"></circle>
+      </g>
+      <path d="M0 312C300 300 600 316 900 306S1300 298 1440 306V320H0Z" fill="#0A140F"></path>
+    </svg>
+    <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none;">
+      
+        <span class="ff" style="left: 4%; top: 85.1%; width: 5.7px; height: 5.7px; animation-duration: 9.1s, 2.7s; animation-delay: -3.5s, -3.5s;"></span>
+      
+        <span class="ff" style="left: 37.5%; top: 80.4%; width: 4.9px; height: 4.9px; animation-duration: 7.7s, 2s; animation-delay: -0.6s, -0.6s;"></span>
+      
+        <span class="ff" style="left: 13%; top: 55.1%; width: 4.4px; height: 4.4px; animation-duration: 9.5s, 2.7s; animation-delay: -2.2s, -2.2s;"></span>
+      
+        <span class="ff" style="left: 15%; top: 89.7%; width: 2.9px; height: 2.9px; animation-duration: 13.4s, 2s; animation-delay: -9.8s, -9.8s;"></span>
+      
+        <span class="ff" style="left: 53.6%; top: 65.4%; width: 4.8px; height: 4.8px; animation-duration: 13.7s, 1.9s; animation-delay: -3.3s, -3.3s;"></span>
+      
+        <span class="ff" style="left: 40.7%; top: 58.8%; width: 4.6px; height: 4.6px; animation-duration: 9.6s, 2.5s; animation-delay: -5.2s, -5.2s;"></span>
+      
+        <span class="ff" style="left: 35.9%; top: 89.6%; width: 5.1px; height: 5.1px; animation-duration: 11.2s, 2.1s; animation-delay: -4.9s, -4.9s;"></span>
+      
+        <span class="ff" style="left: 92.1%; top: 86.4%; width: 5.6px; height: 5.6px; animation-duration: 7.8s, 2.4s; animation-delay: -6.6s, -6.6s;"></span>
+      
+        <span class="ff" style="left: 87.6%; top: 79.3%; width: 3.3px; height: 3.3px; animation-duration: 13s, 3.6s; animation-delay: -9.7s, -9.7s;"></span>
+      
+        <span class="ff" style="left: 42.5%; top: 85.7%; width: 2.9px; height: 2.9px; animation-duration: 7.2s, 2.5s; animation-delay: -7.6s, -7.6s;"></span>
+      
+        <span class="ff" style="left: 25.6%; top: 78.4%; width: 5.9px; height: 5.9px; animation-duration: 8.8s, 3s; animation-delay: -3.3s, -3.3s;"></span>
+      
+        <span class="ff" style="left: 70.1%; top: 78.4%; width: 4.2px; height: 4.2px; animation-duration: 8s, 2.8s; animation-delay: -1.4s, -1.4s;"></span>
+      
+        <span class="ff" style="left: 7.3%; top: 73.5%; width: 3.8px; height: 3.8px; animation-duration: 10.3s, 2.4s; animation-delay: -4.5s, -4.5s;"></span>
+      
+        <span class="ff" style="left: 11.7%; top: 67.4%; width: 2.5px; height: 2.5px; animation-duration: 11.4s, 2.7s; animation-delay: -9.7s, -9.7s;"></span>
+      
+        <span class="ff" style="left: 20.5%; top: 64.5%; width: 3.7px; height: 3.7px; animation-duration: 7.3s, 3.8s; animation-delay: -7.7s, -7.7s;"></span>
+      
+        <span class="ff" style="left: 74.2%; top: 87.7%; width: 3.1px; height: 3.1px; animation-duration: 13.2s, 2.1s; animation-delay: -5.3s, -5.3s;"></span>
+      
+        <span class="ff" style="left: 91.4%; top: 69.9%; width: 5.3px; height: 5.3px; animation-duration: 7.3s, 3s; animation-delay: -5.7s, -5.7s;"></span>
+      
+        <span class="ff" style="left: 34.3%; top: 61.3%; width: 4.1px; height: 4.1px; animation-duration: 11s, 2.3s; animation-delay: -9.6s, -9.6s;"></span>
+      
+    </div>
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 150px 24px 330px; display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center;">
+      <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(38px, 5vw, 72px); line-height: 1; letter-spacing: -0.02em; text-wrap: balance; max-width: 11em;">Nos vemos alrededor de la fogata.</h2>
+      <p style="margin: 0; font-size: 20px; color: #D7E4CF; max-width: 30em;">Quedan cupos para la Temporada Verano 2027. Inscribe a tu hijo y empieza a armar su sendero.</p>
+      <a href="#pase" style="background: #FFFFFF; color: #2F5D2A; text-decoration: none; font-weight: 700; padding: 0 30px; min-height: 56px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
+    </div>
+  </section>
+
+  <footer style="background: #0A140F; color: #FFFFFF;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; font-size: 15px;">
+      <span>Campamento Las Lomas · [Dirección] · [Teléfono] · [Correo]</span>
+      <nav aria-label="Pie de página" style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #FFFFFF;">Reglamento</a>
+        <a href="#" style="color: #FFFFFF;">Privacidad</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+<script>
+// Cambio de modo y parallax por puntero
+const root = document.querySelector('.lm');
+document.querySelector('[data-action="toggle-mode"]').addEventListener('click', () => {
+  root.dataset.mode = root.dataset.mode === 'night' ? 'day' : 'night';
+});
+const hero = document.querySelector('[data-hero]');
+let raf = 0;
+hero.addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  const b = hero.getBoundingClientRect();
+  const x = ((e.clientX - b.left) / b.width) * 2 - 1;
+  const y = ((e.clientY - b.top) / b.height) * 2 - 1;
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(() => {
+    hero.style.setProperty('--mx', x.toFixed(3));
+    hero.style.setProperty('--my', y.toFixed(3));
+  });
+});
+hero.addEventListener('pointerleave', () => {
+  cancelAnimationFrame(raf);
+  hero.style.setProperty('--mx', '0');
+  hero.style.setProperty('--my', '0');
+});
+</script>
+</body>
+</html>
