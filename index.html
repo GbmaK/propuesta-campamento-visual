@@ -14,27 +14,20 @@ a{color:#2F5D2A}a:hover{color:#1E3E1A}
 .lm,.lm *{transition:background-color .9s ease,color .9s ease,border-color .9s ease,fill .9s ease,stroke .9s ease}
 .on-day{opacity:var(--day);transition:opacity 1s ease}
 .on-night{opacity:var(--night);transition:opacity 1s ease}
+/* El modo que no se ve deja de pintarse al terminar el fundido y sus animaciones quedan en pausa */
+.lm[data-mode="night"] .on-day,.lm:not([data-mode="night"]) .on-night{visibility:hidden;transition:opacity 1s ease,transform 1.6s cubic-bezier(.5,0,.2,1),visibility 0s 1s}
+.lm[data-mode="night"] .on-day:is(.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po),.lm[data-mode="night"] .on-day :is(.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po),.lm:not([data-mode="night"]) .on-night:is(.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po),.lm:not([data-mode="night"]) .on-night :is(.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po),.lm-idle :is(.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po){animation-play-state:paused}
 /* Cambio de modo: el sol se pone y la luna sube */
 .sun-g{transform:translateY(calc(var(--night) * 260px));transition:transform 1.6s cubic-bezier(.5,0,.2,1),opacity 1.2s ease}
 .moon-g{transform:translateY(calc(var(--day) * 320px));transition:transform 1.6s cubic-bezier(.5,0,.2,1),opacity 1.2s ease}
-/* Parallax por puntero: cada capa se desplaza según su profundidad */
-.pz{transition:translate .7s cubic-bezier(.2,.7,.2,1),opacity 1s ease}
-.p0{translate:calc(var(--mx,0)*-4px) calc(var(--my,0)*-3px)}
-.p1{translate:calc(var(--mx,0)*-9px) calc(var(--my,0)*-5px)}
-.p2{translate:calc(var(--mx,0)*-14px) calc(var(--my,0)*-6px)}
-.p3{translate:calc(var(--mx,0)*-20px) calc(var(--my,0)*-8px)}
-.p4{translate:calc(var(--mx,0)*-28px) calc(var(--my,0)*-10px)}
-.p5{translate:calc(var(--mx,0)*-38px) calc(var(--my,0)*-12px)}
-.p6{translate:calc(var(--mx,0)*-48px) calc(var(--my,0)*-14px)}
-.p7{translate:calc(var(--mx,0)*-66px) calc(var(--my,0)*-18px)}
 .layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 /* Parallax por scroll de la portada */
 @keyframes lm-y{to{transform:translate3d(var(--x,0px),var(--d),0)}}
 @keyframes lm-text{to{transform:translateY(var(--d));opacity:0}}
 @supports (animation-timeline: scroll()){
 .sy{animation:lm-y linear both;animation-timeline:scroll(root);animation-range:0 900px}
-.s-far{--d:470px}.s-mid{--d:380px}.s-moon{--d:430px}.s-m1{--d:300px}.s-m2{--d:210px}.s-m3{--d:130px}.s-camp{--d:60px}.s-ff{--d:30px}.s-fg{--d:-30px}
-.s-fgl{--d:-50px;--x:-220px}.s-fgr{--d:-50px;--x:220px}
+.s-far{--d:470px}.s-mid{--d:380px}.s-moon{--d:430px}.s-m1{--d:300px}.s-m2{--d:210px}.s-m3{--d:130px}.s-camp{--d:60px}.s-ff{--d:30px}
+.s-fgl{--d:0px;--x:-220px}.s-fgr{--d:0px;--x:220px}
 .s-text{--d:320px;animation-name:lm-text;animation-range:0 620px}
 }
 /* Parallax por sección y apariciones al bajar: siguen el scroll con precisión */
@@ -129,7 +122,6 @@ a{color:#2F5D2A}a:hover{color:#1E3E1A}
 @media (prefers-reduced-motion: reduce){
 .sy,.vd,.trail,.const,.rv,.rv-stick,.pop,.rv-ticket,.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po{animation:none !important}
 .shoot,.spark-l,.spark-r,.smoke,.ripple,.po{opacity:0 !important}
-.pz{translate:none !important}
 .sun-g,.moon-g{transition:opacity 1s ease}
 }
 </style>
@@ -170,53 +162,58 @@ html{scroll-behavior:smooth}
     </div>
   </header>
 
-  <section aria-label="Portada" data-hero style="position: relative; height: 900px; overflow: hidden; background: #FBEAD0;">
+  <section aria-label="Portada" style="position: relative; height: 900px; overflow: hidden; background: #FBEAD0;">
     <!-- Cielo: bandas planas de día y de noche -->
     <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
-      <rect x="0" y="0" width="1440" height="300" fill="#FBEAD0"></rect>
-      <rect x="0" y="300" width="1440" height="130" fill="#F9DDB6"></rect>
-      <rect x="0" y="430" width="1440" height="110" fill="#F6CD98"></rect>
+      <rect x="0" y="0" width="1440" height="900" fill="#FBEAD0"></rect>
+      <rect x="0" y="300" width="1440" height="600" fill="#F9DDB6"></rect>
+      <rect x="0" y="430" width="1440" height="470" fill="#F6CD98"></rect>
       <rect x="0" y="540" width="1440" height="360" fill="#F3BF84"></rect>
       <g class="on-night">
-        <rect x="0" y="0" width="1440" height="300" fill="#060E1A"></rect>
-        <rect x="0" y="300" width="1440" height="130" fill="#0B1A2A"></rect>
-        <rect x="0" y="430" width="1440" height="110" fill="#122638"></rect>
+        <rect x="0" y="0" width="1440" height="900" fill="#060E1A"></rect>
+        <rect x="0" y="300" width="1440" height="600" fill="#0B1A2A"></rect>
+        <rect x="0" y="430" width="1440" height="470" fill="#122638"></rect>
         <rect x="0" y="540" width="1440" height="360" fill="#1A3443"></rect>
       </g>
     </svg>
     <!-- Estrellas en tres profundidades y estrellas fugaces -->
-    <div class="layer on-night sy s-far pz p0" aria-hidden="true">
+    <div class="layer on-night sy s-far" aria-hidden="true">
       <div class="star" style="top: 0; width: 1px; height: 1px; box-shadow: -1200px 250px rgba(255,250,235,0.55),-452px 25px rgba(255,250,235,0.55),865px 229px rgba(255,250,235,0.55),42px 262px rgba(255,250,235,0.55),-67px 158px rgba(255,250,235,0.55),-676px 400px rgba(255,250,235,0.55),-863px 213px rgba(255,250,235,0.55),211px 463px rgba(255,250,235,0.55),-282px 47px rgba(255,250,235,0.55),-678px 412px rgba(255,250,235,0.55),222px 311px rgba(255,250,235,0.55),-51px 131px rgba(255,250,235,0.55),-461px 446px rgba(255,250,235,0.55),-1172px 108px rgba(255,250,235,0.55),182px 399px rgba(255,250,235,0.55),-1168px 215px rgba(255,250,235,0.55),929px 292px rgba(255,250,235,0.55),-967px 342px rgba(255,250,235,0.55),1102px 179px rgba(255,250,235,0.55),963px 10px rgba(255,250,235,0.55),522px 453px rgba(255,250,235,0.55),1078px 161px rgba(255,250,235,0.55),-800px 448px rgba(255,250,235,0.55),1075px 410px rgba(255,250,235,0.55),1200px 448px rgba(255,250,235,0.55),-165px 143px rgba(255,250,235,0.55),277px 13px rgba(255,250,235,0.55),1085px 466px rgba(255,250,235,0.55),-356px 490px rgba(255,250,235,0.55),-1197px 373px rgba(255,250,235,0.55),1083px 308px rgba(255,250,235,0.55),430px 285px rgba(255,250,235,0.55),847px 243px rgba(255,250,235,0.55),1026px 559px rgba(255,250,235,0.55),-179px 454px rgba(255,250,235,0.55),19px 126px rgba(255,250,235,0.55),-1085px 29px rgba(255,250,235,0.55),785px 61px rgba(255,250,235,0.55),-358px 309px rgba(255,250,235,0.55),-296px 264px rgba(255,250,235,0.55),-946px 212px rgba(255,250,235,0.55),-781px 321px rgba(255,250,235,0.55),122px 518px rgba(255,250,235,0.55),-964px 549px rgba(255,250,235,0.55),1186px 434px rgba(255,250,235,0.55),156px 207px rgba(255,250,235,0.55),867px 362px rgba(255,250,235,0.55),5px 171px rgba(255,250,235,0.55),79px 144px rgba(255,250,235,0.55),1110px 319px rgba(255,250,235,0.55),985px 82px rgba(255,250,235,0.55),-818px 538px rgba(255,250,235,0.55),458px 161px rgba(255,250,235,0.55),784px 204px rgba(255,250,235,0.55),909px 271px rgba(255,250,235,0.55),22px 129px rgba(255,250,235,0.55),-959px 447px rgba(255,250,235,0.55),896px 147px rgba(255,250,235,0.55),618px 191px rgba(255,250,235,0.55),868px 243px rgba(255,250,235,0.55),-1198px 11px rgba(255,250,235,0.55),-1121px 312px rgba(255,250,235,0.55),-490px 452px rgba(255,250,235,0.55),-440px 358px rgba(255,250,235,0.55),1176px 276px rgba(255,250,235,0.55),617px 97px rgba(255,250,235,0.55),369px 277px rgba(255,250,235,0.55),-614px 148px rgba(255,250,235,0.55),-7px 349px rgba(255,250,235,0.55),-98px 169px rgba(255,250,235,0.55),-21px 285px rgba(255,250,235,0.55),-918px 353px rgba(255,250,235,0.55),759px 278px rgba(255,250,235,0.55),144px 120px rgba(255,250,235,0.55),656px 209px rgba(255,250,235,0.55),-950px 320px rgba(255,250,235,0.55),-273px 111px rgba(255,250,235,0.55),28px 516px rgba(255,250,235,0.55),-255px 92px rgba(255,250,235,0.55),811px 467px rgba(255,250,235,0.55),543px 135px rgba(255,250,235,0.55),-522px 132px rgba(255,250,235,0.55),-451px 514px rgba(255,250,235,0.55),460px 315px rgba(255,250,235,0.55),-186px 288px rgba(255,250,235,0.55),-137px 416px rgba(255,250,235,0.55),-1167px 439px rgba(255,250,235,0.55),676px 10px rgba(255,250,235,0.55),681px 272px rgba(255,250,235,0.55),275px 5px rgba(255,250,235,0.55),827px 546px rgba(255,250,235,0.55),956px 139px rgba(255,250,235,0.55),-797px 206px rgba(255,250,235,0.55),-59px 559px rgba(255,250,235,0.55),603px 263px rgba(255,250,235,0.55),-759px 317px rgba(255,250,235,0.55),250px 556px rgba(255,250,235,0.55),-446px 47px rgba(255,250,235,0.55),-84px 538px rgba(255,250,235,0.55),798px 40px rgba(255,250,235,0.55),189px 406px rgba(255,250,235,0.55),861px 279px rgba(255,250,235,0.55),-326px 102px rgba(255,250,235,0.55),988px 369px rgba(255,250,235,0.55),-869px 310px rgba(255,250,235,0.55),-375px 360px rgba(255,250,235,0.55),817px 15px rgba(255,250,235,0.55),149px 488px rgba(255,250,235,0.55),739px 432px rgba(255,250,235,0.55),-819px 118px rgba(255,250,235,0.55),591px 434px rgba(255,250,235,0.55),-968px 402px rgba(255,250,235,0.55),834px 212px rgba(255,250,235,0.55),-373px 281px rgba(255,250,235,0.55),-732px 46px rgba(255,250,235,0.55),59px 443px rgba(255,250,235,0.55),1160px 297px rgba(255,250,235,0.55),1089px 494px rgba(255,250,235,0.55),-310px 508px rgba(255,250,235,0.55),-65px 370px rgba(255,250,235,0.55),472px 469px rgba(255,250,235,0.55),-857px 489px rgba(255,250,235,0.55),-1160px 183px rgba(255,250,235,0.55),1177px 386px rgba(255,250,235,0.55),1045px 437px rgba(255,250,235,0.55),-1184px 5px rgba(255,250,235,0.55),16px 0px rgba(255,250,235,0.55),26px 333px rgba(255,250,235,0.55),18px 272px rgba(255,250,235,0.55),-581px 112px rgba(255,250,235,0.55),716px 65px rgba(255,250,235,0.55),-1104px 504px rgba(255,250,235,0.55),-230px 518px rgba(255,250,235,0.55),-354px 195px rgba(255,250,235,0.55),940px 155px rgba(255,250,235,0.55),-63px 237px rgba(255,250,235,0.55),-508px 538px rgba(255,250,235,0.55),273px 70px rgba(255,250,235,0.55),109px 349px rgba(255,250,235,0.55),353px 58px rgba(255,250,235,0.55),-879px 70px rgba(255,250,235,0.55),-936px 457px rgba(255,250,235,0.55),443px 10px rgba(255,250,235,0.55),2px 213px rgba(255,250,235,0.55),267px 530px rgba(255,250,235,0.55),-931px 412px rgba(255,250,235,0.55),882px 464px rgba(255,250,235,0.55),167px 66px rgba(255,250,235,0.55),-208px 550px rgba(255,250,235,0.55),375px 416px rgba(255,250,235,0.55),381px 158px rgba(255,250,235,0.55),-325px 542px rgba(255,250,235,0.55),290px 325px rgba(255,250,235,0.55),-7px 284px rgba(255,250,235,0.55),476px 163px rgba(255,250,235,0.55),-268px 441px rgba(255,250,235,0.55),-977px 262px rgba(255,250,235,0.55),303px 410px rgba(255,250,235,0.55),176px 436px rgba(255,250,235,0.55),-387px 259px rgba(255,250,235,0.55),1070px 70px rgba(255,250,235,0.55),-890px 267px rgba(255,250,235,0.55),-27px 456px rgba(255,250,235,0.55),-196px 263px rgba(255,250,235,0.55),477px 414px rgba(255,250,235,0.55),833px 41px rgba(255,250,235,0.55),-424px 513px rgba(255,250,235,0.55),-636px 149px rgba(255,250,235,0.55),-1027px 482px rgba(255,250,235,0.55),-1039px 444px rgba(255,250,235,0.55);"></div>
       <div class="star twk" style="top: 0; width: 2px; height: 2px; box-shadow: -1200px 14px #FFF7E6,-291px 296px #FFF7E6,-591px 19px #FFF7E6,-1003px 331px #FFF7E6,297px 269px #FFF7E6,769px 511px #FFF7E6,-931px 429px #FFF7E6,-649px 99px #FFF7E6,-153px 96px #FFF7E6,765px 290px #FFF7E6,245px 430px #FFF7E6,112px 216px #FFF7E6,-92px 64px #FFF7E6,-924px 22px #FFF7E6,163px 69px #FFF7E6,1050px 286px #FFF7E6,-1113px 50px #FFF7E6,1032px 297px #FFF7E6,122px 215px #FFF7E6,705px 218px #FFF7E6,437px 323px #FFF7E6,291px 177px #FFF7E6,1164px 363px #FFF7E6,66px 188px #FFF7E6,-546px 20px #FFF7E6,311px 533px #FFF7E6,-75px 174px #FFF7E6,-569px 448px #FFF7E6,-744px 349px #FFF7E6,988px 212px #FFF7E6,737px 326px #FFF7E6,899px 182px #FFF7E6,463px 195px #FFF7E6,-909px 47px #FFF7E6,717px 376px #FFF7E6,39px 451px #FFF7E6,-305px 10px #FFF7E6,-758px 368px #FFF7E6,342px 82px #FFF7E6,36px 386px #FFF7E6,-1104px 477px #FFF7E6,-324px 451px #FFF7E6,1127px 259px #FFF7E6,1040px 370px #FFF7E6,1170px 236px #FFF7E6,-328px 25px #FFF7E6,-1024px 435px #FFF7E6,229px 247px #FFF7E6,-53px 192px #FFF7E6,-734px 299px #FFF7E6,-341px 412px #FFF7E6,254px 55px #FFF7E6,85px 80px #FFF7E6,-107px 411px #FFF7E6,-498px 251px #FFF7E6,1136px 114px #FFF7E6,613px 263px #FFF7E6,-308px 198px #FFF7E6,419px 482px #FFF7E6,-148px 540px #FFF7E6;"></div>
       <div class="star twk" style="top: 0; width: 2px; height: 2px; box-shadow: -1199px 468px #FFF7E6,1098px 524px #FFF7E6,510px 55px #FFF7E6,578px 64px #FFF7E6,-878px 315px #FFF7E6,-745px 118px #FFF7E6,590px 151px #FFF7E6,1147px 323px #FFF7E6,798px 154px #FFF7E6,-753px 256px #FFF7E6,-127px 222px #FFF7E6,701px 230px #FFF7E6,-460px 268px #FFF7E6,-234px 105px #FFF7E6,-259px 510px #FFF7E6,436px 109px #FFF7E6,506px 408px #FFF7E6,-636px 78px #FFF7E6,-222px 533px #FFF7E6,404px 279px #FFF7E6,-863px 191px #FFF7E6,572px 472px #FFF7E6,-945px 372px #FFF7E6,-311px 396px #FFF7E6,-983px 79px #FFF7E6,-335px 365px #FFF7E6,714px 93px #FFF7E6,-497px 87px #FFF7E6,-1197px 115px #FFF7E6,338px 130px #FFF7E6,-67px 360px #FFF7E6,-953px 434px #FFF7E6,14px 150px #FFF7E6,834px 193px #FFF7E6,-1039px 394px #FFF7E6,63px 115px #FFF7E6,-595px 438px #FFF7E6,242px 100px #FFF7E6,759px 461px #FFF7E6,-778px 269px #FFF7E6,310px 345px #FFF7E6,209px 255px #FFF7E6,-900px 158px #FFF7E6,-623px 454px #FFF7E6,1152px 474px #FFF7E6,308px 180px #FFF7E6,1170px 535px #FFF7E6,891px 163px #FFF7E6,-607px 73px #FFF7E6,1115px 200px #FFF7E6,913px 169px #FFF7E6,304px 323px #FFF7E6,450px 82px #FFF7E6,454px 120px #FFF7E6,659px 240px #FFF7E6,-364px 371px #FFF7E6,47px 517px #FFF7E6,-913px 84px #FFF7E6,987px 471px #FFF7E6,-134px 446px #FFF7E6; animation-delay: -1.7s;"></div>
     </div>
-    <div class="layer on-night sy s-mid pz p1" aria-hidden="true">
+    <div class="layer on-night sy s-mid" aria-hidden="true">
       <div class="star twk" style="top: 0; width: 3px; height: 3px; box-shadow: -1199px 457px #FFFFFF,-1087px 145px #FFFFFF,-632px 284px #FFFFFF,-16px 461px #FFFFFF,-1193px 253px #FFFFFF,-419px 249px #FFFFFF,-1101px 391px #FFFFFF,800px 35px #FFFFFF,170px 192px #FFFFFF,-430px 255px #FFFFFF,-896px 188px #FFFFFF,-682px 147px #FFFFFF,832px 436px #FFFFFF,898px 309px #FFFFFF,-1085px 77px #FFFFFF,-607px 186px #FFFFFF,984px 242px #FFFFFF,-1170px 186px #FFFFFF,72px 42px #FFFFFF,60px 171px #FFFFFF,-977px 35px #FFFFFF,-478px 436px #FFFFFF,73px 401px #FFFFFF,-56px 418px #FFFFFF,-111px 61px #FFFFFF,298px 150px #FFFFFF; animation-delay: -0.8s;"></div>
       <div class="shoot" style="left: 16%; top: 90px;"></div>
       <div class="shoot" style="left: 50%; top: 36px; animation-duration: 15s; animation-delay: -6s;"></div>
     </div>
     <!-- Sol de día, luna de noche -->
-    <svg class="layer sy s-moon pz p1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-moon" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" style="overflow: visible;">
+      <defs>
+        <linearGradient id="lm-ray" gradientUnits="userSpaceOnUse" x1="0" y1="550" x2="0" y2="0"><stop offset="0" stop-color="#FFF7E8" stop-opacity="0.55"></stop><stop offset="1" stop-color="#FFF7E8" stop-opacity="0"></stop></linearGradient>
+      </defs>
       <g class="on-day sun-g">
-        <path class="rays" d="M1060 550L640 0H780ZM1060 550L900 0H1000ZM1060 550L1110 0H1210ZM1060 550L1340 0H1440V40ZM1060 550L1440 220V320Z" fill="#FFF7E8" opacity="0.55"></path>
+        <path class="rays" d="M1060 550L640 0H780ZM1060 550L900 0H1000ZM1060 550L1110 0H1210ZM1060 550L1340 0H1440V40ZM1060 550L1440 220V320Z" fill="url(#lm-ray)"></path>
         <g class="breathe">
           <circle cx="1060" cy="550" r="210" fill="none" stroke="#FCE3BD" stroke-width="16"></circle>
           <circle cx="1060" cy="550" r="160" fill="none" stroke="#FDE9C9" stroke-width="20"></circle>
         </g>
         <circle cx="1060" cy="550" r="108" fill="#FFF4DE"></circle>
       </g>
+    </svg>
+    <svg class="layer sy s-moon" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" style="overflow: visible;">
       <g class="on-night moon-g">
-        <circle cx="1080" cy="250" r="170" fill="#F4EFDF" opacity="0.04"></circle>
-        <circle cx="1080" cy="250" r="118" fill="#F4EFDF" opacity="0.07"></circle>
-        <circle cx="1080" cy="250" r="84" fill="#F4EFDF" opacity="0.1"></circle>
-        <circle cx="1080" cy="250" r="58" fill="#F4EFDF"></circle>
-        <circle cx="1062" cy="236" r="9" fill="#E3DCC4"></circle>
-        <circle cx="1098" cy="268" r="6" fill="#E3DCC4"></circle>
-        <circle cx="1092" cy="226" r="4" fill="#E3DCC4"></circle>
+        <circle cx="1080" cy="270" r="170" fill="#F4EFDF" opacity="0.04"></circle>
+        <circle cx="1080" cy="270" r="118" fill="#F4EFDF" opacity="0.07"></circle>
+        <circle cx="1080" cy="270" r="84" fill="#F4EFDF" opacity="0.1"></circle>
+        <circle cx="1080" cy="270" r="58" fill="#F4EFDF"></circle>
+        <circle cx="1062" cy="256" r="9" fill="#E3DCC4"></circle>
+        <circle cx="1098" cy="288" r="6" fill="#E3DCC4"></circle>
+        <circle cx="1092" cy="246" r="4" fill="#E3DCC4"></circle>
       </g>
     </svg>
     <!-- Nubes y aves de día -->
-    <svg class="layer on-day pz p1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer on-day" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <g class="cloud" fill="#FFF6E8">
         <ellipse cx="240" cy="190" rx="74" ry="20"></ellipse><ellipse cx="206" cy="178" rx="36" ry="26"></ellipse><ellipse cx="262" cy="170" rx="44" ry="32"></ellipse>
         <ellipse cx="1250" cy="236" rx="64" ry="18"></ellipse><ellipse cx="1222" cy="226" rx="30" ry="20"></ellipse><ellipse cx="1268" cy="220" rx="36" ry="26"></ellipse>
@@ -232,12 +229,12 @@ html{scroll-behavior:smooth}
       <path d="M20 44q6-8 12 0q6-8 12 0M70 30q5-7 10 0q5-7 10 0M120 40q5-7 10 0q5-7 10 0M165 24q5-7 10 0q5-7 10 0" fill="none" stroke="#8C6A3E" stroke-width="1.8" stroke-linecap="round"></path>
     </svg>
     <!-- Cordillera lejana con nieve -->
-    <svg class="layer sy s-m1 pz p2" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-m1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 630L120 550L210 595L330 485L430 560L540 470L650 555L760 510L880 580L1000 502L1120 572L1230 520L1340 582L1440 540V900H0Z" style="fill: var(--mFar);"></path>
       <path d="M330 485L355 508L340 512L362 528L330 520ZM540 470L566 496L548 500L572 516L540 508ZM1000 502L1024 524L1008 528L1030 542L1000 536Z" style="fill: var(--snow);"></path>
     </svg>
     <!-- Cerros medios y laguna con reflejo -->
-    <svg class="layer sy s-m2 pz p3" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-m2" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 700L140 615L260 670L400 580L520 670L660 602L790 688L930 612L1060 682L1200 622L1320 678L1440 642V900H0Z" style="fill: var(--mMid);"></path>
       <g class="on-day"><g class="cshadow" fill="#1E3E1A" opacity="0.11"><ellipse cx="320" cy="662" rx="150" ry="20"></ellipse><ellipse cx="1010" cy="654" rx="190" ry="24"></ellipse></g></g>
       <rect x="0" y="702" width="1440" height="44" style="fill: var(--lake);"></rect>
@@ -255,18 +252,18 @@ html{scroll-behavior:smooth}
       </g>
     </svg>
     <!-- Bosque -->
-    <svg class="layer sy s-m3 pz p4" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-m3" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 750C240 714 480 742 720 726S1200 710 1440 736V900H0ZM20 668L35 700L28 700L43 728L33 728L49 748L-9 748L7 728L-3 728L12 700L5 700ZM76 644L96 686L87 686L106 722L93 722L114 748L38 748L59 722L46 722L65 686L56 686ZM132 678L146 706L139 706L152 731L144 731L158 748L106 748L120 731L112 731L125 706L118 706ZM188 652L207 690L198 690L215 724L204 724L223 748L153 748L172 724L161 724L178 690L169 690ZM244 630L267 677L256 677L278 719L264 719L287 748L201 748L224 719L210 719L232 677L221 677ZM300 664L316 698L309 698L324 727L314 727L331 748L269 748L286 727L276 727L291 698L284 698ZM356 682L369 708L363 708L375 732L367 732L380 748L332 748L345 732L337 732L349 708L343 708ZM412 648L431 688L422 688L441 723L429 723L449 748L375 748L395 723L383 723L402 688L393 688ZM468 658L485 694L477 694L494 726L483 726L501 748L435 748L453 726L442 726L459 694L451 694ZM524 674L538 704L531 704L545 730L536 730L551 748L497 748L512 730L503 730L517 704L510 704ZM580 636L602 681L591 681L612 720L599 720L621 748L539 748L561 720L548 720L569 681L558 681ZM636 662L653 696L645 696L661 727L650 727L668 748L604 748L622 727L611 727L627 696L619 696ZM692 678L706 706L699 706L712 731L704 731L718 748L666 748L680 731L672 731L685 706L678 706ZM748 650L767 689L758 689L776 724L764 724L784 748L712 748L732 724L720 724L738 689L729 689ZM804 628L827 676L816 676L838 718L824 718L848 748L760 748L784 718L770 718L792 676L781 676ZM860 668L875 700L868 700L883 728L873 728L889 748L831 748L847 728L837 728L852 700L845 700ZM916 656L934 693L925 693L942 725L931 725L950 748L882 748L901 725L890 725L907 693L898 693ZM972 680L985 707L979 707L991 731L983 731L997 748L947 748L961 731L953 731L965 707L959 707ZM1028 642L1048 684L1039 684L1058 722L1046 722L1067 748L989 748L1010 722L998 722L1017 684L1008 684ZM1084 660L1101 695L1093 695L1109 726L1099 726L1116 748L1052 748L1069 726L1059 726L1075 695L1067 695ZM1140 672L1155 702L1148 702L1162 729L1153 729L1168 748L1112 748L1127 729L1118 729L1132 702L1125 702ZM1196 638L1217 682L1207 682L1227 721L1214 721L1236 748L1156 748L1178 721L1165 721L1185 682L1175 682ZM1252 654L1270 692L1262 692L1279 725L1268 725L1287 748L1217 748L1236 725L1225 725L1242 692L1234 692ZM1308 676L1322 705L1315 705L1329 730L1320 730L1334 748L1282 748L1296 730L1287 730L1301 705L1294 705ZM1364 648L1383 688L1374 688L1393 723L1381 723L1401 748L1327 748L1347 723L1335 723L1354 688L1345 688ZM1420 664L1436 698L1429 698L1444 727L1434 727L1451 748L1389 748L1406 727L1396 727L1411 698L1404 698Z" style="fill: var(--mNear);"></path>
       <g class="on-day"><g class="mist" style="animation-duration: 52s; animation-delay: -20s;"><ellipse cx="760" cy="754" rx="470" ry="14" fill="#FFFFFF" opacity="0.32"></ellipse></g></g>
-    </svg>
-    <!-- Haces de luz que cruzan el bosque -->
-    <svg class="layer on-day sy s-m3 pz p5" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+      <!-- Haces de luz que cruzan el bosque -->
+      <g class="on-day">
       <path class="shaft" d="M1440 160L980 900H1120L1440 330Z" fill="#FFF7E8"></path>
       <path class="shaft" d="M1440 420L1180 900H1290L1440 560Z" fill="#FFF7E8" style="animation-delay: -3s;"></path>
       <path class="shaft" d="M1340 0L700 900H830L1440 60Z" fill="#FFF7E8" style="animation-delay: -6s;"></path>
+      </g>
     </svg>
     <!-- Campamento: carpas, banderines de equipo, fogata y letrero -->
-    <svg class="layer sy s-camp pz p5" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-camp" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <defs>
         <radialGradient id="lm-warm"><stop offset="0" stop-color="#FFC765" stop-opacity="0.6"></stop><stop offset="1" stop-color="#FFC765" stop-opacity="0"></stop></radialGradient>
       </defs>
@@ -371,8 +368,9 @@ html{scroll-behavior:smooth}
         <circle class="spark-r" cx="786" cy="812" r="1.5" style="animation-delay: -3.3s;"></circle>
       </g>
     </svg>
-    <!-- Luciérnagas sobre el prado -->
-    <div class="layer on-night sy s-ff pz p6" aria-hidden="true">
+    <!-- Luciérnagas de noche, polen y mariposas de día, sobre el prado -->
+    <div class="layer sy s-ff" aria-hidden="true">
+      <div class="layer on-night">
       
         <span class="ff" style="left: 4%; top: 83%; width: 5.2px; height: 5.2px; animation-duration: 9.1s, 3.1s; animation-delay: -0.9s, -0.9s;"></span>
       
@@ -426,9 +424,8 @@ html{scroll-behavior:smooth}
       
         <span class="ff" style="left: 33.5%; top: 87.8%; width: 4.7px; height: 4.7px; animation-duration: 14s, 3s; animation-delay: -1.5s, -1.5s;"></span>
       
-    </div>
-    <!-- Polen y mariposas sobre el prado, de día -->
-    <div class="layer on-day sy s-ff pz p6" aria-hidden="true">
+      </div>
+      <div class="layer on-day">
       
         <span class="po" style="left: 4%; top: 84.1%; width: 2.8px; height: 2.8px; animation-duration: 16.1s, 16.1s; animation-delay: -6.7s, -6.7s;"></span>
       
@@ -507,15 +504,16 @@ html{scroll-behavior:smooth}
           <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><g class="wl"><path d="M11 8C8 1 2 0 1 4c-1 4 4 6 10 4zM11 8c-5 1-8 4-6 7 2 2 5-2 6-7z" fill="#FFFFFF"></path><circle cx="3.2" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><g class="wr"><path d="M11 8c3-7 9-8 10-4 1 4-4 6-10 4zM11 8c5 1 8 4 6 7-2 2-5-2-6-7z" fill="#FFFFFF"></path><circle cx="18.8" cy="3.6" r="1.1" fill="#3D4A38"></circle></g><path d="M11 4v9" stroke="#3D4A38" stroke-width="1.4" stroke-linecap="round"></path></svg>
         </span>
       
+      </div>
     </div>
     <!-- Primer plano: suelo y pinos que se abren como telón al bajar -->
-    <svg class="layer sy s-fg pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 874C300 856 600 888 900 868S1300 852 1440 864V900H0Z" style="fill: var(--fg);"></path>
     </svg>
-    <svg class="layer sy s-fgl pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-fgl" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M40 545L110 689L76 689L143 815L100 815L172 905L-92 905L-20 815L-63 815L4 689L-30 689ZM112 615L168 731L141 731L195 833L160 833L219 905L5 905L64 833L29 833L83 731L56 731ZM176 505L253 665L216 665L290 805L242 805L323 905L29 905L110 805L62 805L136 665L99 665ZM236 655L284 755L261 755L307 843L277 843L328 905L144 905L195 843L165 843L211 755L188 755Z" style="fill: var(--fg);"></path>
     </svg>
-    <svg class="layer sy s-fgr pz p7" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer sy s-fgr" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M1210 645L1260 749L1236 749L1284 840L1253 840L1306 905L1114 905L1167 840L1136 840L1184 749L1160 749ZM1270 555L1338 695L1305 695L1370 818L1328 818L1399 905L1141 905L1212 818L1170 818L1235 695L1202 695ZM1340 605L1398 725L1370 725L1426 830L1390 830L1450 905L1230 905L1290 830L1254 830L1310 725L1282 725ZM1410 475L1493 647L1454 647L1533 798L1481 798L1568 905L1252 905L1339 798L1287 798L1366 647L1327 647Z" style="fill: var(--fg);"></path>
     </svg>
     <div class="sy s-text" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 0; display: flex; flex-direction: column; gap: 18px;">
@@ -1040,12 +1038,12 @@ Tu hijo elige el camino.</h1>
 
   <section id="pase" aria-label="Pase de temporada" style="position: relative; overflow: hidden; background: #FBEAD0;">
     <svg class="bg-layer vd" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
-      <rect x="0" y="0" width="1440" height="420" fill="#FBEAD0"></rect>
-      <rect x="0" y="420" width="1440" height="160" fill="#F6D6B0"></rect>
+      <rect x="0" y="0" width="1440" height="900" fill="#FBEAD0"></rect>
+      <rect x="0" y="420" width="1440" height="480" fill="#F6D6B0"></rect>
       <rect x="0" y="580" width="1440" height="320" fill="#E9C2A6"></rect>
       <g class="on-night">
-        <rect x="0" y="0" width="1440" height="420" fill="#0A1724"></rect>
-        <rect x="0" y="420" width="1440" height="160" fill="#10212F"></rect>
+        <rect x="0" y="0" width="1440" height="900" fill="#0A1724"></rect>
+        <rect x="0" y="420" width="1440" height="480" fill="#10212F"></rect>
         <rect x="0" y="580" width="1440" height="320" fill="#162B36"></rect>
         <path class="twk" d="M58 30a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M257 143a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M454 256a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M651 369a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M848 102a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1043 215a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1242 328a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M-1 61a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M196 174a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M393 287a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M588 400a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M787 133a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M984 246a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1181 359a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1378 92a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M133 205a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M332 318a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M529 51a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M726 164a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M923 277a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1118 390a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1317 123a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M74 236a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M271 349a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M468 82a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M663 195a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M862 308a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1059 41a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1256 154a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M13 267a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M208 380a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M407 113a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M604 226a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M801 339a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M998 72a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M1193 185a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0M1392 298a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M149 31a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M346 144a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M543 257a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0" fill="#FFF7E6"></path>
         <circle cx="240" cy="560" r="44" fill="#F4EFDF"></circle>
@@ -1109,8 +1107,8 @@ Tu hijo elige el camino.</h1>
   <section aria-label="Cierre" style="position: relative; overflow: hidden; background: #13221C; color: #FFFFFF;">
     <!-- Cielo nocturno en capas: cada una baja a distinta velocidad -->
     <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
-      <rect x="0" y="0" width="1440" height="330" fill="#08121C"></rect>
-      <rect x="0" y="330" width="1440" height="240" fill="#0D1A22"></rect>
+      <rect x="0" y="0" width="1440" height="900" fill="#08121C"></rect>
+      <rect x="0" y="330" width="1440" height="570" fill="#0D1A22"></rect>
       <rect x="0" y="570" width="1440" height="330" fill="#13221C"></rect>
     </svg>
     <div class="bgx vd v-far" aria-hidden="true">
@@ -1219,29 +1217,16 @@ Tu hijo elige el camino.</h1>
   </footer>
 </div>
 <script>
-// Cambio de modo y parallax por puntero
+// Cambio de modo
 const root = document.querySelector('.lm');
 document.querySelector('[data-action="toggle-mode"]').addEventListener('click', () => {
   root.dataset.mode = root.dataset.mode === 'night' ? 'day' : 'night';
 });
-const hero = document.querySelector('[data-hero]');
-let raf = 0;
-hero.addEventListener('pointermove', (e) => {
-  if (e.pointerType !== 'mouse') return;
-  const b = hero.getBoundingClientRect();
-  const x = ((e.clientX - b.left) / b.width) * 2 - 1;
-  const y = ((e.clientY - b.top) / b.height) * 2 - 1;
-  cancelAnimationFrame(raf);
-  raf = requestAnimationFrame(() => {
-    hero.style.setProperty('--mx', x.toFixed(3));
-    hero.style.setProperty('--my', y.toFixed(3));
-  });
-});
-hero.addEventListener('pointerleave', () => {
-  cancelAnimationFrame(raf);
-  hero.style.setProperty('--mx', '0');
-  hero.style.setProperty('--my', '0');
-});
+// Las animaciones de ambiente se pausan mientras su sección está fuera de pantalla
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => e.target.classList.toggle('lm-idle', !e.isIntersecting));
+}, { rootMargin: '200px 0px' });
+root.querySelectorAll('section, footer').forEach((el) => io.observe(el));
 </script>
 </body>
 </html>
