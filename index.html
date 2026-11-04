@@ -66,7 +66,7 @@ a{color:#2F5D2A}a:hover{color:#1E3E1A}
 @keyframes cshadow{from{transform:translateX(-220px)}to{transform:translateX(260px)}}
 .cshadow{animation:cshadow 74s linear infinite alternate}
 @keyframes shaft{0%,100%{opacity:.06}50%{opacity:.2}}
-.shaft{animation:shaft 9s ease-in-out infinite}
+.shaft{opacity:.12;animation:shaft 9s ease-in-out infinite}
 @keyframes ripple{from{transform:scale(.2);opacity:.9}to{transform:scale(1.8);opacity:0}}
 .ripple{transform-box:fill-box;transform-origin:50% 50%;animation:ripple 4.5s ease-out infinite}
 /* Pasto, cometa y bandera */
@@ -119,6 +119,54 @@ a{color:#2F5D2A}a:hover{color:#1E3E1A}
 .ff{position:absolute;border-radius:50%;background:#FFF5B8;box-shadow:0 0 6px 2px rgba(255,238,150,.9),0 0 22px 8px rgba(242,181,58,.4);animation-name:ff-drift,ff-blink;animation-timing-function:ease-in-out,ease-in-out;animation-iteration-count:infinite,infinite}
 .badge{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
 .badge:hover{transform:translateY(-6px) rotate(-5deg)}
+/* Tabletas y celulares: sendero vertical y semana en carrusel */
+@media (max-width: 900px){
+.trail-wrap{overflow:visible!important;padding:8px 0 0!important;margin:0!important}
+.trail-inner{min-width:0!important}
+.trail-line{display:none}
+.trail-list{grid-template-columns:minmax(0,1fr)!important;gap:20px!important}
+.trail-list::before{content:"";position:absolute;left:22px;top:24px;bottom:24px;width:4px;border-radius:2px;background:var(--head)}
+.trail-list>li{display:grid!important;grid-template-columns:48px minmax(0,1fr);column-gap:16px!important;row-gap:0!important;align-items:center;animation-range:entry 10% entry 90%!important}
+.trail-node{grid-row:span 2}
+.trail-node>.on-night{left:-20px!important;top:-20px!important;width:88px!important;height:88px!important}
+.trail-theme{margin-top:0!important;align-self:end}
+.trail-dates{align-self:start}
+.week-wrap{margin:0 -24px;padding:0 24px 8px;scroll-snap-type:x mandatory;scroll-padding:0 24px}
+.week-grid{grid-template-columns:repeat(5,46%)!important;min-width:0!important}
+.week-grid>div{scroll-snap-align:start}
+.ticket-stub{border-left:0!important;border-top:4px dashed #2F5D2A}
+.moon{left:auto!important;right:-60px}
+}
+/* Celulares */
+@media (max-width: 640px){
+.hd{padding:10px 16px!important;gap:4px 12px!important}
+.hd-name{font-size:19px!important}
+.hd-sub,.hd-cta{display:none!important}
+.hd-nav{gap:4px 12px!important;font-size:15px!important}
+.hd-mode{width:44px;padding:0!important;justify-content:center}
+.hd-mode-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero{height:760px!important}
+.hero .scene{top:auto;bottom:0;height:520px;overflow:visible;translate:-38px 0}
+.moon{right:-50px;top:330px!important;width:240px!important;height:240px!important}
+.hero .birds{top:420px!important}
+.hero-text{padding-top:36px!important}
+.hero-btn{padding:0 18px!important;font-size:16px;min-height:50px!important}
+.eyebrow{letter-spacing:.08em!important;font-size:12.5px!important}
+.badge-list{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 8px!important}
+.badge-list>li{width:auto!important}
+.badge-list .badge{width:88px;height:88px}
+.badge-list .halo{left:50%;top:-20px;width:128px;height:128px;margin-left:-64px}
+.week-grid{grid-template-columns:repeat(5,84%)!important}
+.aud-a{padding-right:0!important}
+.aud-b{padding-left:20px!important}
+.ticket-main{padding:26px 22px!important}
+.ticket-stub{padding:24px 22px!important}
+.price{font-size:36px!important}
+.const-svg{left:auto!important;right:-24px;top:20px!important;width:210px!important;height:140px!important}
+.close-body{padding-top:180px!important}
+/* Menos partículas en pantallas chicas: se ve igual de vivo y anda más liviano */
+.ff:nth-child(2n),.po:nth-child(2n),.bf:nth-child(2n){display:none}
+}
 @media (prefers-reduced-motion: reduce){
 .sy,.vd,.trail,.const,.rv,.rv-stick,.pop,.rv-ticket,.twk,.shoot,.cloud,.birds,.flame,.glow,.spark-l,.spark-r,.smoke,.shim,.ff,.rays,.breathe,.mist,.dew,.flag,.bf,.wl,.wr,.lamp,.cshadow,.shaft,.ripple,.grass,.kite,.wave,.po{animation:none !important}
 .shoot,.spark-l,.spark-r,.smoke,.ripple,.po{opacity:0 !important}
@@ -135,34 +183,34 @@ html{scroll-behavior:smooth}
 <div class="lm" data-mode="night" style="width: 100%; background: var(--bg); color: var(--ink); font-family: Figtree, system-ui, sans-serif; font-size: 18px; line-height: 1.55;">
 
   <header style="background: var(--band); color: #FFFFFF;">
-    <div style="max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px;">
+    <div class="hd" style="max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px;">
       <a href="#" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #FFFFFF;">
         <svg width="42" height="42" viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="46" stroke="#FFFFFF" stroke-width="4"></circle><circle cx="50" cy="50" r="38" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4 5"></circle><path d="M28 66L50 32L72 66M50 32V66M42 66L50 52L58 66" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         <span style="display: flex; flex-direction: column; line-height: 1.1;">
-          <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px;">Campamento Las Lomas</span>
-          <span style="font-size: 14px; opacity: 0.9;">Temporada Verano 2027 · 4 ene al 26 feb</span>
+          <span class="hd-name" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 22px;">Campamento Las Lomas</span>
+          <span class="hd-sub" style="font-size: 14px; opacity: 0.9;">Temporada Verano 2027 · 4 ene al 26 feb</span>
         </span>
       </a>
-      <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; font-weight: 700; font-size: 17px;">
+      <nav class="hd-nav" aria-label="Principal" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; font-weight: 700; font-size: 17px;">
         <a href="#sendero" style="color: #FFFFFF; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;">La temporada</a>
         <a href="#preguntas" style="color: #FFFFFF; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;">Preguntas</a>
         <a href="#" style="color: #FFFFFF; min-height: 44px; display: inline-flex; align-items: center;">Ingresar</a>
-        <button type="button" data-action="toggle-mode" style="background: transparent; color: #FFFFFF; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; font-family: Figtree, system-ui, sans-serif; font-weight: 700; font-size: 16px; cursor: pointer;">
+        <button class="hd-mode" type="button" data-action="toggle-mode" style="background: transparent; color: #FFFFFF; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; font-family: Figtree, system-ui, sans-serif; font-weight: 700; font-size: 16px; cursor: pointer;">
           <span class="ui ui-night">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"></path></svg>
-            <span>Ver de día</span>
+            <span class="hd-mode-label">Ver de día</span>
           </span>
           <span class="ui ui-day">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg>
-            <span>Ver de noche</span>
+            <span class="hd-mode-label">Ver de noche</span>
           </span>
         </button>
-        <a href="#pase" style="background: #FFFFFF; color: #2F5D2A; text-decoration: none; padding: 0 20px; min-height: 46px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
+        <a class="hd-cta" href="#pase" style="background: #FFFFFF; color: #2F5D2A; text-decoration: none; padding: 0 20px; min-height: 46px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
       </nav>
     </div>
   </header>
 
-  <section aria-label="Portada" style="position: relative; height: 900px; overflow: hidden; background: #FBEAD0;">
+  <section class="hero" aria-label="Portada" style="position: relative; height: 900px; overflow: hidden; background: #FBEAD0;">
     <!-- Cielo: bandas planas de día y de noche -->
     <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <rect x="0" y="0" width="1440" height="900" fill="#FBEAD0"></rect>
@@ -188,7 +236,7 @@ html{scroll-behavior:smooth}
       <div class="shoot" style="left: 50%; top: 36px; animation-duration: 15s; animation-delay: -6s;"></div>
     </div>
     <!-- Sol de día, luna de noche -->
-    <svg class="layer sy s-moon" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" style="overflow: visible;">
+    <svg class="layer scene sy s-moon" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" style="overflow: visible;">
       <defs>
         <linearGradient id="lm-ray" gradientUnits="userSpaceOnUse" x1="0" y1="550" x2="0" y2="0"><stop offset="0" stop-color="#FFF7E8" stop-opacity="0.55"></stop><stop offset="1" stop-color="#FFF7E8" stop-opacity="0"></stop></linearGradient>
       </defs>
@@ -201,7 +249,7 @@ html{scroll-behavior:smooth}
         <circle cx="1060" cy="550" r="108" fill="#FFF4DE"></circle>
       </g>
     </svg>
-    <svg class="layer sy s-moon" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" style="overflow: visible;">
+    <svg class="moon sy s-moon" aria-hidden="true" viewBox="880 70 400 400" style="position: absolute; left: calc(75% - 200px); top: 70px; width: 400px; height: 400px; overflow: visible; pointer-events: none;">
       <g class="on-night moon-g">
         <circle cx="1080" cy="270" r="170" fill="#F4EFDF" opacity="0.04"></circle>
         <circle cx="1080" cy="270" r="118" fill="#F4EFDF" opacity="0.07"></circle>
@@ -229,12 +277,12 @@ html{scroll-behavior:smooth}
       <path d="M20 44q6-8 12 0q6-8 12 0M70 30q5-7 10 0q5-7 10 0M120 40q5-7 10 0q5-7 10 0M165 24q5-7 10 0q5-7 10 0" fill="none" stroke="#8C6A3E" stroke-width="1.8" stroke-linecap="round"></path>
     </svg>
     <!-- Cordillera lejana con nieve -->
-    <svg class="layer sy s-m1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-m1" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 630L120 550L210 595L330 485L430 560L540 470L650 555L760 510L880 580L1000 502L1120 572L1230 520L1340 582L1440 540V900H0Z" style="fill: var(--mFar);"></path>
       <path d="M330 485L355 508L340 512L362 528L330 520ZM540 470L566 496L548 500L572 516L540 508ZM1000 502L1024 524L1008 528L1030 542L1000 536Z" style="fill: var(--snow);"></path>
     </svg>
     <!-- Cerros medios y laguna con reflejo -->
-    <svg class="layer sy s-m2" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-m2" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 700L140 615L260 670L400 580L520 670L660 602L790 688L930 612L1060 682L1200 622L1320 678L1440 642V900H0Z" style="fill: var(--mMid);"></path>
       <g class="on-day"><g class="cshadow" fill="#1E3E1A" opacity="0.11"><ellipse cx="320" cy="662" rx="150" ry="20"></ellipse><ellipse cx="1010" cy="654" rx="190" ry="24"></ellipse></g></g>
       <rect x="0" y="702" width="1440" height="44" style="fill: var(--lake);"></rect>
@@ -252,7 +300,7 @@ html{scroll-behavior:smooth}
       </g>
     </svg>
     <!-- Bosque -->
-    <svg class="layer sy s-m3" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-m3" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 750C240 714 480 742 720 726S1200 710 1440 736V900H0ZM20 668L35 700L28 700L43 728L33 728L49 748L-9 748L7 728L-3 728L12 700L5 700ZM76 644L96 686L87 686L106 722L93 722L114 748L38 748L59 722L46 722L65 686L56 686ZM132 678L146 706L139 706L152 731L144 731L158 748L106 748L120 731L112 731L125 706L118 706ZM188 652L207 690L198 690L215 724L204 724L223 748L153 748L172 724L161 724L178 690L169 690ZM244 630L267 677L256 677L278 719L264 719L287 748L201 748L224 719L210 719L232 677L221 677ZM300 664L316 698L309 698L324 727L314 727L331 748L269 748L286 727L276 727L291 698L284 698ZM356 682L369 708L363 708L375 732L367 732L380 748L332 748L345 732L337 732L349 708L343 708ZM412 648L431 688L422 688L441 723L429 723L449 748L375 748L395 723L383 723L402 688L393 688ZM468 658L485 694L477 694L494 726L483 726L501 748L435 748L453 726L442 726L459 694L451 694ZM524 674L538 704L531 704L545 730L536 730L551 748L497 748L512 730L503 730L517 704L510 704ZM580 636L602 681L591 681L612 720L599 720L621 748L539 748L561 720L548 720L569 681L558 681ZM636 662L653 696L645 696L661 727L650 727L668 748L604 748L622 727L611 727L627 696L619 696ZM692 678L706 706L699 706L712 731L704 731L718 748L666 748L680 731L672 731L685 706L678 706ZM748 650L767 689L758 689L776 724L764 724L784 748L712 748L732 724L720 724L738 689L729 689ZM804 628L827 676L816 676L838 718L824 718L848 748L760 748L784 718L770 718L792 676L781 676ZM860 668L875 700L868 700L883 728L873 728L889 748L831 748L847 728L837 728L852 700L845 700ZM916 656L934 693L925 693L942 725L931 725L950 748L882 748L901 725L890 725L907 693L898 693ZM972 680L985 707L979 707L991 731L983 731L997 748L947 748L961 731L953 731L965 707L959 707ZM1028 642L1048 684L1039 684L1058 722L1046 722L1067 748L989 748L1010 722L998 722L1017 684L1008 684ZM1084 660L1101 695L1093 695L1109 726L1099 726L1116 748L1052 748L1069 726L1059 726L1075 695L1067 695ZM1140 672L1155 702L1148 702L1162 729L1153 729L1168 748L1112 748L1127 729L1118 729L1132 702L1125 702ZM1196 638L1217 682L1207 682L1227 721L1214 721L1236 748L1156 748L1178 721L1165 721L1185 682L1175 682ZM1252 654L1270 692L1262 692L1279 725L1268 725L1287 748L1217 748L1236 725L1225 725L1242 692L1234 692ZM1308 676L1322 705L1315 705L1329 730L1320 730L1334 748L1282 748L1296 730L1287 730L1301 705L1294 705ZM1364 648L1383 688L1374 688L1393 723L1381 723L1401 748L1327 748L1347 723L1335 723L1354 688L1345 688ZM1420 664L1436 698L1429 698L1444 727L1434 727L1451 748L1389 748L1406 727L1396 727L1411 698L1404 698Z" style="fill: var(--mNear);"></path>
       <g class="on-day"><g class="mist" style="animation-duration: 52s; animation-delay: -20s;"><ellipse cx="760" cy="754" rx="470" ry="14" fill="#FFFFFF" opacity="0.32"></ellipse></g></g>
       <!-- Haces de luz que cruzan el bosque -->
@@ -263,7 +311,7 @@ html{scroll-behavior:smooth}
       </g>
     </svg>
     <!-- Campamento: carpas, banderines de equipo, fogata y letrero -->
-    <svg class="layer sy s-camp" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-camp" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <defs>
         <radialGradient id="lm-warm"><stop offset="0" stop-color="#FFC765" stop-opacity="0.6"></stop><stop offset="1" stop-color="#FFC765" stop-opacity="0"></stop></radialGradient>
       </defs>
@@ -369,7 +417,7 @@ html{scroll-behavior:smooth}
       </g>
     </svg>
     <!-- Luciérnagas de noche, polen y mariposas de día, sobre el prado -->
-    <div class="layer sy s-ff" aria-hidden="true">
+    <div class="layer scene sy s-ff" aria-hidden="true">
       <div class="layer on-night">
       
         <span class="ff" style="left: 4%; top: 83%; width: 5.2px; height: 5.2px; animation-duration: 9.1s, 3.1s; animation-delay: -0.9s, -0.9s;"></span>
@@ -507,23 +555,23 @@ html{scroll-behavior:smooth}
       </div>
     </div>
     <!-- Primer plano: suelo y pinos que se abren como telón al bajar -->
-    <svg class="layer" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M0 874C300 856 600 888 900 868S1300 852 1440 864V900H0Z" style="fill: var(--fg);"></path>
     </svg>
-    <svg class="layer sy s-fgl" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-fgl" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M40 545L110 689L76 689L143 815L100 815L172 905L-92 905L-20 815L-63 815L4 689L-30 689ZM112 615L168 731L141 731L195 833L160 833L219 905L5 905L64 833L29 833L83 731L56 731ZM176 505L253 665L216 665L290 805L242 805L323 905L29 905L110 805L62 805L136 665L99 665ZM236 655L284 755L261 755L307 843L277 843L328 905L144 905L195 843L165 843L211 755L188 755Z" style="fill: var(--fg);"></path>
     </svg>
-    <svg class="layer sy s-fgr" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <svg class="layer scene sy s-fgr" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
       <path d="M1210 645L1260 749L1236 749L1284 840L1253 840L1306 905L1114 905L1167 840L1136 840L1184 749L1160 749ZM1270 555L1338 695L1305 695L1370 818L1328 818L1399 905L1141 905L1212 818L1170 818L1235 695L1202 695ZM1340 605L1398 725L1370 725L1426 830L1390 830L1450 905L1230 905L1290 830L1254 830L1310 725L1282 725ZM1410 475L1493 647L1454 647L1533 798L1481 798L1568 905L1252 905L1339 798L1287 798L1366 647L1327 647Z" style="fill: var(--fg);"></path>
     </svg>
-    <div class="sy s-text" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 0; display: flex; flex-direction: column; gap: 18px;">
-      <span style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: var(--eyebrow);">TEMPORADA VERANO 2027 · 4 ENE AL 26 FEB</span>
-      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(46px, 6.4vw, 96px); line-height: 0.95; letter-spacing: -0.02em; color: var(--heroInk); white-space: pre-line;">Ocho semanas.
+    <div class="sy s-text hero-text" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 0; display: flex; flex-direction: column; gap: 18px;">
+      <span class="eyebrow" style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: var(--eyebrow);">TEMPORADA VERANO 2027 · 4 ENE AL 26 FEB</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(40px, 6.4vw, 96px); line-height: 0.95; letter-spacing: -0.02em; color: var(--heroInk); white-space: pre-line;">Ocho semanas.
 Un sendero.
 Tu hijo elige el camino.</h1>
       <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 6px;">
-        <a href="#pase" style="background: var(--btn); color: var(--btnInk); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
-        <a href="#sendero" style="background: var(--btn2); color: var(--btn2Ink); border: 2px solid var(--btn2Line); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center; box-sizing: border-box;">Ver la temporada</a>
+        <a class="hero-btn" href="#pase" style="background: var(--btn); color: var(--btnInk); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
+        <a class="hero-btn" href="#sendero" style="background: var(--btn2); color: var(--btn2Ink); border: 2px solid var(--btn2Line); text-decoration: none; font-weight: 700; padding: 0 26px; min-height: 54px; border-radius: 999px; display: inline-flex; align-items: center; box-sizing: border-box;">Ver la temporada</a>
       </div>
     </div>
   </section>
@@ -537,84 +585,84 @@ Tu hijo elige el camino.</h1>
         <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">El sendero de la temporada</h2>
         <p style="margin: 0; max-width: 28em; font-size: 20px; color: var(--muted);">Para niñas y niños de 6 a 13 años, de 9:00 a 17:00. Cada semana trae su paisaje, y cada actividad, una insignia para su pasaporte.</p>
       </div>
-      <div style="overflow-x: auto; padding: 44px 40px 6px; margin: -36px -40px 0;">
-        <div style="position: relative; min-width: 1040px;">
-          <svg aria-hidden="true" viewBox="0 0 1000 48" preserveAspectRatio="none" style="position: absolute; left: 24px; right: 24px; width: calc(100% - 48px); top: 0; height: 48px;">
+      <div class="trail-wrap" style="overflow-x: auto; padding: 44px 40px 6px; margin: -36px -40px 0;">
+        <div class="trail-inner" style="position: relative; min-width: 1040px;">
+          <svg class="trail-line" aria-hidden="true" viewBox="0 0 1000 48" preserveAspectRatio="none" style="position: absolute; left: 24px; right: 24px; width: calc(100% - 48px); top: 0; height: 48px;">
             <path d="M0 24H1000" style="stroke: var(--line);" stroke-width="4" stroke-dasharray="10 9"></path>
             <path class="trail" d="M0 24H1000" pathLength="1" style="stroke: var(--head);" stroke-width="4" stroke-dasharray="1" stroke-dashoffset="0"></path>
           </svg>
-          <ol style="list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px;">
+          <ol class="trail-list" style="list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px;">
             
               <li class="pop l0" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: 0s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--head); color: var(--bg); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">1</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bienvenida</span>
-                <span style="font-size: 15px; color: var(--quiet);">4 al 8 ene</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bienvenida</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">4 al 8 ene</span>
               </li>
             
               <li class="pop l1" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -0.42s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">2</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bosque</span>
-                <span style="font-size: 15px; color: var(--quiet);">11 al 15 ene</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Bosque</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">11 al 15 ene</span>
               </li>
             
               <li class="pop l2" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -0.84s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">3</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Agua</span>
-                <span style="font-size: 15px; color: var(--quiet);">18 al 22 ene</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Agua</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">18 al 22 ene</span>
               </li>
             
               <li class="pop l3" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -1.26s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">4</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Deportes</span>
-                <span style="font-size: 15px; color: var(--quiet);">25 al 29 ene</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Deportes</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">25 al 29 ene</span>
               </li>
             
               <li class="pop l4" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -1.68s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">5</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Arte</span>
-                <span style="font-size: 15px; color: var(--quiet);">1 al 5 feb</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Arte</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">1 al 5 feb</span>
               </li>
             
               <li class="pop l5" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.1s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">6</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Cerro</span>
-                <span style="font-size: 15px; color: var(--quiet);">8 al 12 feb</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Cerro</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">8 al 12 feb</span>
               </li>
             
               <li class="pop l6" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.52s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">7</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Ciencia</span>
-                <span style="font-size: 15px; color: var(--quiet);">15 al 19 feb</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Ciencia</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">15 al 19 feb</span>
               </li>
             
               <li class="pop l7" style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="position: relative; display: block; width: 48px; height: 48px;">
+                <span class="trail-node" style="position: relative; display: block; width: 48px; height: 48px;">
                   <span class="on-night" aria-hidden="true" style="position: absolute; left: -32px; top: -32px; width: 112px; height: 112px; pointer-events: none;"><span class="lamp" style="display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(242,196,106,0.5), rgba(242,196,106,0) 66%); animation-delay: -2.94s;"></span></span>
                   <span style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--bg); color: var(--head); border: 4px solid var(--head); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 20px;">8</span>
                 </span>
-                <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Gran final</span>
-                <span style="font-size: 15px; color: var(--quiet);">22 al 26 feb</span>
+                <span class="trail-theme" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 21px; color: var(--head); line-height: 1.15; margin-top: 8px;">Gran final</span>
+                <span class="trail-dates" style="font-size: 15px; color: var(--quiet);">22 al 26 feb</span>
               </li>
             
           </ol>
@@ -700,7 +748,7 @@ Tu hijo elige el camino.</h1>
         <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">Las insignias de este verano</h2>
         <p style="margin: 0; max-width: 30em; color: var(--muted);">Cada actividad es una insignia. Tu hijo se inscribe, participa y la suma a su pasaporte de temporada.</p>
       </div>
-      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 28px 34px;">
+      <ul class="badge-list" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 28px 34px;">
         
           <li class="rv-stick" style="position: relative; width: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
             <span class="on-night halo" aria-hidden="true"></span>
@@ -799,8 +847,8 @@ Tu hijo elige el camino.</h1>
     </div>
     <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px; display: flex; flex-direction: column; gap: 32px;">
       <h2 class="rv" style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 4vw, 56px); line-height: 1; color: var(--head);">Semana 1, día por día</h2>
-      <div style="overflow-x: auto;">
-        <div style="display: grid; grid-template-columns: repeat(5, minmax(210px, 1fr)); min-width: 1050px;">
+      <div class="week-wrap" style="overflow-x: auto;">
+        <div class="week-grid" style="display: grid; grid-template-columns: repeat(5, minmax(210px, 1fr)); min-width: 1050px;">
           
             <div class="rv" style="border-left: 3px dashed var(--dash); padding: 0 18px 8px; display: flex; flex-direction: column; gap: 18px;">
               <div style="display: flex; flex-direction: column; line-height: 1.1;">
@@ -1020,11 +1068,11 @@ Tu hijo elige el camino.</h1>
       
     </div>
     <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 72px 24px 130px; display: flex; flex-wrap: wrap; gap: 40px 0;">
-      <div class="rv" style="flex: 1 1 420px; padding-right: 48px; display: flex; flex-direction: column; gap: 14px;">
+      <div class="rv aud-a" style="flex: 1 1 420px; padding-right: 48px; display: flex; flex-direction: column; gap: 14px;">
         <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--head);">Para ellos</h2>
         <p style="margin: 0; font-size: 22px; line-height: 1.5;">Eligen sus actividades. Arman equipos para los torneos. Votan las ideas del verano, y nadie ve su voto. Juntan insignias en su pasaporte.</p>
       </div>
-      <div class="rv d2" style="flex: 1 1 420px; border-left: 3px dashed var(--dash); padding-left: 48px; display: flex; flex-direction: column; gap: 14px;">
+      <div class="rv d2 aud-b" style="flex: 1 1 420px; border-left: 3px dashed var(--dash); padding-left: 48px; display: flex; flex-direction: column; gap: 14px;">
         <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--head);">Para ti</h2>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
           <li>Pagas la temporada en línea.</li>
@@ -1069,12 +1117,12 @@ Tu hijo elige el camino.</h1>
     </div>
     <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 96px 24px 150px; display: flex; justify-content: center;">
       <div class="rv-ticket" style="width: 100%; max-width: 900px; display: flex; flex-wrap: wrap; border: 4px solid #2F5D2A; border-radius: 22px; overflow: hidden; background: #FFFFFF; color: #23301F;">
-        <div style="flex: 999 1 420px; padding: 36px 40px; display: flex; flex-direction: column; gap: 8px;">
-          <span style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: #56624F;">PASE DE TEMPORADA · VERANO 2027</span>
-          <span style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 50px; line-height: 1.05; color: #2F5D2A;">[Precio de la temporada]</span>
+        <div class="ticket-main" style="flex: 999 1 420px; padding: 36px 40px; display: flex; flex-direction: column; gap: 8px;">
+          <span class="eyebrow" style="font-weight: 700; letter-spacing: 0.14em; font-size: 14px; color: #56624F;">PASE DE TEMPORADA · VERANO 2027</span>
+          <span class="price" style="font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 50px; line-height: 1.05; color: #2F5D2A;">[Precio de la temporada]</span>
           <span style="color: #3D4A38;">Todas las actividades del itinerario y la app para apoderados. Las excursiones se pagan aparte.</span>
         </div>
-        <div style="flex: 1 1 240px; border-left: 4px dashed #2F5D2A; background: #EEF5E6; padding: 36px 32px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+        <div class="ticket-stub" style="flex: 1 1 240px; border-left: 4px dashed #2F5D2A; background: #EEF5E6; padding: 36px 32px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
           <span style="font-size: 15px; color: #3D4A38;">Cupos de temporada: 90</span>
           <a href="#" style="background: #2F5D2A; color: #FFFFFF; text-decoration: none; font-weight: 700; min-height: 52px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 22px;">Inscribir a mi hijo</a>
         </div>
@@ -1125,7 +1173,7 @@ Tu hijo elige el camino.</h1>
       <circle cx="1150" cy="420" r="54" fill="#FFF4DE"></circle>
       <circle cx="1176" cy="402" r="50" fill="#08121C"></circle>
     </svg>
-    <svg class="vd v-mid" role="img" aria-label="Constelación con forma de carpa" viewBox="0 0 360 240" style="position: absolute; left: 3%; top: 60px; width: 360px; height: 240px; pointer-events: none;">
+    <svg class="vd v-mid const-svg" role="img" aria-label="Constelación con forma de carpa" viewBox="0 0 360 240" style="position: absolute; left: 3%; top: 60px; width: 360px; height: 240px; pointer-events: none;">
       <path class="const" d="M40 200L150 90L260 200M150 90V30L198 48L150 66" pathLength="1" fill="none" stroke="#CFE5BF" stroke-width="1.6" stroke-dasharray="1" stroke-dashoffset="0" opacity="0.7"></path>
       <path d="M36.5 200a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M146 90a4 4 0 1 0 8 0a4 4 0 1 0-8 0M256.5 200a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0M147 30a3 3 0 1 0 6 0a3 3 0 1 0-6 0M195 48a3 3 0 1 0 6 0a3 3 0 1 0-6 0M147 66a3 3 0 1 0 6 0a3 3 0 1 0-6 0" fill="#FFF7E6"></path>
       <text x="150" y="232" text-anchor="middle" font-family="Figtree, system-ui, sans-serif" font-size="13" font-weight="700" fill="#A3B49A" letter-spacing="1.5">LA CARPA</text>
@@ -1199,7 +1247,7 @@ Tu hijo elige el camino.</h1>
         <span class="ff" style="left: 34.3%; top: 61.3%; width: 4.1px; height: 4.1px; animation-duration: 11s, 2.3s; animation-delay: -9.6s, -9.6s;"></span>
       
     </div>
-    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 150px 24px 330px; display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center;">
+    <div class="close-body" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 150px 24px 330px; display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center;">
       <h2 style="margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(38px, 5vw, 72px); line-height: 1; letter-spacing: -0.02em; text-wrap: balance; max-width: 11em;">Nos vemos alrededor de la fogata.</h2>
       <p style="margin: 0; font-size: 20px; color: #D7E4CF; max-width: 30em;">Quedan cupos para la Temporada Verano 2027. Inscribe a tu hijo y empieza a armar su sendero.</p>
       <a href="#pase" style="background: #FFFFFF; color: #2F5D2A; text-decoration: none; font-weight: 700; padding: 0 30px; min-height: 56px; border-radius: 999px; display: inline-flex; align-items: center;">Inscribir a mi hijo</a>
